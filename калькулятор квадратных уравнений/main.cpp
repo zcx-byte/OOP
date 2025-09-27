@@ -4,11 +4,15 @@
     #include "formulas.h"
     #include <cmath>
     #include <cassert>
+    #include <stdexcept>    
+
+    using namespace std;
+
 
 // функция для сравнения double с погрешностью
 bool eq(double a, double b) {
 
-    return std::abs(a - b) < 1e-9;
+    return abs(a - b) < 1e-9;
 
 }
     
@@ -53,41 +57,39 @@ bool eq(double a, double b) {
         // assert(has_roots && eq(x_1, -3) && eq(x_2, 3));         // если всё true - то всё в норме        
 
 
-        // std::cout << "все тесты пройдены успешно\n";
+        //  cout << "все тесты пройдены успешно\n";
 
     
         
-        std::cout << "введите коэффициент аx (он должен быть отличен от 0)\n";
-        std::cout << "ax = ";
-        std:: cin >> ax;
+        cout << "введите коэффициент аx, bx, c соответственно\n";
+        cin >> ax >> bx >> c;
 
-        std::cout << "введите коэффициент bx^2\n";
-        std::cout << "bx^2 = ";
-        std:: cin >> bx;
+        try {
 
-        std::cout << "введите коэффициент c\n";
-        std::cout << "c = ";
-        std:: cin >> c;
+            if (ax == 0) {
 
+                throw invalid_argument("Коэффициент a не может быть равен нулю для квадратного уравнения.");
+
+            }
 
         if ((bx == 0) && (c == 0)) {
 
-            std:: cout << "Один корень: x = 0";
+              cout << "Один корень: x = 0";
 
         } else if (bx == 0) {
             
             // функция типа bool, поэтому её можно использовать в if
             if (solve_equation_outB(ax, c, x_1, x_2)) {
 
-                std:: cout << "ваши корни: \n";
+                  cout << "ваши корни: \n";
 
-                std:: cout << "x1 = " << x_1 << "\n";
+                  cout << "x1 = " << x_1 << "\n";
 
-                std:: cout << "x2 = " << x_2 << "\n";
+                  cout << "x2 = " << x_2 << "\n";
                 
             } else {
 
-                std:: cout << "корней нет";
+                  cout << "корней нет";
 
             }
 
@@ -96,11 +98,11 @@ bool eq(double a, double b) {
             // функция типа void И записывает результат через ссылки, поэтому можем так вызвать
             solve_equation_outC(ax, bx, x_1, x_2);
 
-            std:: cout << "ваши корни: \n";
+              cout << "ваши корни: \n";
 
-            std:: cout << "x1 = " << x_1 << " \n";
+              cout << "x1 = " << x_1 << " \n";
 
-            std:: cout << "x2 = " << x_2;
+              cout << "x2 = " << x_2;
 
         } else {
 
@@ -110,11 +112,11 @@ bool eq(double a, double b) {
 
                 x_1 = -bx / 2*ax;
 
-                std:: cout << "дискриминант равен 0, ваш корень: x = " << x_1 << "\n"; 
+                  cout << "дискриминант равен 0, ваш корень: x = " << x_1 << "\n"; 
 
             } else if (dic < 0) {
 
-                std:: cout << "дискриминант меньше 0, корней нет";
+                  cout << "дискриминант меньше 0, корней нет";
 
             } else {
 
@@ -122,14 +124,35 @@ bool eq(double a, double b) {
 
                 x_2 = (-bx - sqrt(dic)) / 2*ax;
 
-                std:: cout << "ваши корни: \n";
+                  cout << "ваши корни: \n";
 
-                std:: cout << "x1 = " << x_1 << "\n";
+                  cout << "x1 = " << x_1 << "\n";
                 
-                std:: cout << "x2 = " << x_2 << "\n";
+                  cout << "x2 = " << x_2 << "\n";
             }
 
         } 
+    }
+
+    // блоки обработки исключений (catch), которые идут после try. 
+    // они нужны, чтобы перехватить и корректно обработать ошибки, которые могут возникнуть в программе.
+    // err - просто переменная для ошибки
+    catch (const invalid_argument &err) {
+
+        // err.what() — метод, который возвращает текст ошибки, который указали при throw
+        cerr << "Ошибка: " << err.what() << endl;
+
+        return 1;  // Код ошибки
+    }
+
+    // обобщённый обработчик — ловит все стандартные исключения, которые не ожидаешь
+    // например: out_of_range, bad_alloc(не получилось выделить память), и т.п.
+    catch (const exception &err) {
+
+        cerr << "Неизвестная ошибка: " << err.what() << endl;
+
+        return 1;
+    }
             
         return 0;
     }

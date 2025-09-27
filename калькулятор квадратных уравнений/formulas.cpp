@@ -1,16 +1,18 @@
 #include "formulas.h"
 #include <cmath>
+#include <stdexcept>
+
+using namespace std;
 
 // функция для вычисления дискриминанта
 double discriminant(double a, double b, double c) {
 
-    double res = pow(b, 2) - 4 * a * c;
+        return pow(b, 2) - 4 * a * c;
 
-    return res;
 }
 
-// функция для решения уравнения ax^2 + bx = 0
-void solve_equation_outC(double a, double b, double& x1, double& x2) {
+// функция для решения уравнения ax^2 + bx = 0 
+void solve_equation_outC(double a, double b, double &x1, double &x2) {
 
     x1 = 0;
     x2 = -b / a;
@@ -18,7 +20,7 @@ void solve_equation_outC(double a, double b, double& x1, double& x2) {
 }
 
 // функция для решения уравнения ax^2 + c = 0
-bool solve_equation_outB(double a, double c, double& x1, double& x2) {
+bool solve_equation_outB(double a, double c, double &x1, double &x2) {
 
     double x = -c / a;
 
