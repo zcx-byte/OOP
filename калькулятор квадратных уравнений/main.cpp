@@ -1,13 +1,14 @@
-    // калькулятор для решения квадратных уравнений всех видов
-    #include <iostream>
-    #include <windows.h>
-    #include "formulas.h"
-    #include <cmath>
-    #include <cassert>
-    #include <stdexcept>    
+// Автор: Прасков Даниил. ИВТ-24-2.
+// Данная программа является калькулятором для решения квадратных уравнений.    
+    
+#include <iostream>
+#include <windows.h>
+#include "formulas.h"
+#include <cmath>
+#include <cassert>
+#include <stdexcept>    
 
-    using namespace std;
-
+using namespace std;
 
 // функция для сравнения double с погрешностью
 bool eq(double a, double b) {
@@ -66,47 +67,41 @@ bool eq(double a, double b) {
 
         try {
 
-            if (ax == 0) {
+            if ((bx == 0) && (c == 0)) {
 
-                throw invalid_argument("Коэффициент a не может быть равен нулю для квадратного уравнения.");
+                cout << "Один корень: x = 0";
 
-            }
+            } else if (bx == 0) {
+                
+                // функция типа bool, поэтому её можно использовать в if
+                if (Quadratic::solve_equation_outB(ax, c, x_1, x_2)) {
 
-        if ((bx == 0) && (c == 0)) {
+                    cout << "ваши корни: \n";
 
-              cout << "Один корень: x = 0";
+                    cout << "x1 = " << x_1 << "\n";
 
-        } else if (bx == 0) {
-            
-            // функция типа bool, поэтому её можно использовать в if
-            if (solve_equation_outB(ax, c, x_1, x_2)) {
-
-                  cout << "ваши корни: \n";
-
-                  cout << "x1 = " << x_1 << "\n";
-
-                  cout << "x2 = " << x_2 << "\n";
+                    cout << "x2 = " << x_2 << "\n";
                 
             } else {
-
-                  cout << "корней нет";
+                
+                cout << "корней нет";
 
             }
 
         } else if (c == 0) {
-
+            
             // функция типа void И записывает результат через ссылки, поэтому можем так вызвать
-            solve_equation_outC(ax, bx, x_1, x_2);
+            Quadratic::solve_equation_outC(ax, bx, x_1, x_2);
 
-              cout << "ваши корни: \n";
+            cout << "ваши корни: \n";
 
-              cout << "x1 = " << x_1 << " \n";
+            cout << "x1 = " << x_1 << " \n";
 
-              cout << "x2 = " << x_2;
+            cout << "x2 = " << x_2;
 
         } else {
 
-            double dic = discriminant(ax, bx, c);
+            double dic = Quadratic::discriminant(ax, bx, c);
 
             if (dic == 0) {
 

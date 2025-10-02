@@ -4,37 +4,56 @@
 
 using namespace std;
 
-// функция для вычисления дискриминанта
-double discriminant(double a, double b, double c) {
+// Оборачиваем ВСЁ в namespace
+namespace Quadratic {
 
-        return pow(b, 2) - 4 * a * c;
+    // функция для вычисления дискриминанта
+    double discriminant(double a, double b, double c) {
+        if (a == 0.0) {
 
-}
-
-// функция для решения уравнения ax^2 + bx = 0 
-void solve_equation_outC(double a, double b, double &x1, double &x2) {
-
-    x1 = 0;
-    x2 = -b / a;
-
-}
-
-// функция для решения уравнения ax^2 + c = 0
-bool solve_equation_outB(double a, double c, double &x1, double &x2) {
-
-    double x = -c / a;
-
-    if (x > 0) {
-
-        x1 = sqrt(x) * (-1);
-
-        x2 = sqrt(x);
-
-        return true;
-
-    } else {
-
-        return false;
-
+            throw invalid_argument("Коэффициент 'a' не может быть равен нулю: уравнение не является квадратным.");
+        }
+        return std::pow(b, 2) - 4 * a * c;
     }
+
+    // функция для решения уравнения ax^2 + bx = 0 
+    void solve_equation_outC(double a, double b, double &x1, double &x2) {
+
+        if (a == 0.0) {
+
+            throw invalid_argument("Коэффициент 'a' не может быть равен нулю: уравнение не является квадратным.");
+
+        } else {
+
+            x1 = 0;
+            x2 = -b / a;
+
+        }
+    }
+
+    // функция для решения уравнения ax^2 + c = 0
+    bool solve_equation_outB(double a, double c, double &x1, double &x2) {
+
+        if (a == 0.0) {
+
+            throw invalid_argument("Коэффициент 'a' не может быть равен нулю: уравнение не является квадратным.");
+
+        }
+
+        double x = -c / a;
+
+        if (x > 0) {
+
+            x1 = sqrt(x) * (-1);
+            x2 = sqrt(x);
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
+    }
+
 }
