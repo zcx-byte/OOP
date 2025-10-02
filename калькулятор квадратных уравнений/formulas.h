@@ -15,6 +15,6 @@ namespace Quadratic {
     // функция для решения уравнения ax^2 + c = 0
     void solve_equation_outC(double a, double b, double& x1, double& x2);
 
-}
+}  // namespace Quadratic
 
 #endif 
