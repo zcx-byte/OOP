@@ -39,7 +39,7 @@ namespace QuadraticTest {
         has_roots = Quadratic::solve_equation_outB(1, -9, x1, x2); // x² - 9 = 0
         assert(has_roots && eq(x1, -3) && eq(x2, 3));
 
-        std::cout << "Все тесты пройдены успешно!\n";
+        cout << "Все тесты пройдены успешно!\n";
     }
 
 } // namespace QuadraticTest
