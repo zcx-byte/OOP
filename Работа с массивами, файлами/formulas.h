@@ -37,4 +37,13 @@ namespace random_utils {
 
 }
 
+namespace write_toFile{
+
+    // функция для записи вектора и массива в файл
+    void writeVectorToFile(const vector<double>& vec, double sum_v, ofstream& file);
+
+    void writeArrayToFile(const double *arr, int size, double sum_arr, ofstream& file);
+
+}
+
 #endif

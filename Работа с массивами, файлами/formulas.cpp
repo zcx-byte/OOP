@@ -124,3 +124,47 @@ namespace vector_mass_work{
         }
     }
 }
+
+namespace write_toFile{
+
+    // функция для записи вектора в файл
+    void writeVectorToFile(const vector<double>& vec, double sum_v,  ofstream& file) {
+        
+        if (file.is_open()){
+            file << "использованные числа в векторе: \n";
+
+            for (int i = 0; i < vec.size(); i++) {
+                file << vec[i] << " ";
+            }
+            file << endl;
+            file << "результат вычислений: \n";
+            file << sum_v;
+            file << endl;
+            cout << "Данные вектора записаны в файл.\n";
+        } else {
+
+            cout << "Не удалось открыть файл для записи вектора.\n";
+        }
+    }
+
+    // Функция для записи массива и его результата в файл
+    void writeArrayToFile(const double* arr, int size, double sum_arr,  ofstream& file) {
+
+        if (file.is_open()) {
+
+            file << "Использованные числа в массиве: \n";
+            for (int i = 0; i < size; i++){
+                file << arr[i] << " ";
+            }
+
+            file << endl;
+            file << "результат вычислений: \n";
+            file << sum_arr;
+            file << endl;
+            cout << "Данные массива записаны в файл.\n";
+        } else {
+            cout << "Не удалось открыть файл для записи массива.\n";
+        }
+    }
+
+}

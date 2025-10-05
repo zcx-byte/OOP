@@ -31,7 +31,7 @@ int main(){
 
     const string filename = "mass.txt";
 
-    cout << "сначала с помощью вектора" << endl;
+    cout << "=сначала с помощью вектора=" << endl;
 
     // читаем вектор из файла
     // данная функция открывает, читает и закрывает файл
@@ -64,10 +64,9 @@ int main(){
         try {
         // используем нашу функцию по заполнению вектора рандомными числами
         vector_mass_work::fillVectorWithRandom(vec, min, max);
-        
         }
 
-        catch (const std::invalid_argument& e) {
+        catch (const invalid_argument& e) {
 
             cerr << "Ошибка при заполнении вектора: " << e.what() << endl;
 
@@ -91,7 +90,7 @@ int main(){
     // выводим сумму
     cout << "сумма в векторе равна = " << sum_v << endl;
 
-    cout << "теперь массив" << endl;
+    cout << "=Теперь с помощью массива=" << endl;
 
     double *arr = nullptr;  // по факту пока просто создаём массив
     int size = 0;   // соответственно и размер у него пока 0
@@ -99,9 +98,9 @@ int main(){
     double sum_arr = 0.0;
 
     // снова его открываем для чтения
-    ifstream file(filename);
+    ifstream input_file(filename);
 
-    if (!file.is_open()) {
+    if (!input_file.is_open()) {
 
         cerr << "Ошибка: не удалось открыть файл " << filename << endl;
 
@@ -111,11 +110,11 @@ int main(){
     double value;
     int count = 0;
 
-    while (file >> value){
+    while (input_file >> value){
         count++;
     }
 
-    file.close();
+    input_file.close();
 
     if (count == 0) {
         cout << "Файл пуст, используем заполнение рандомными числами" << endl;
@@ -139,13 +138,13 @@ int main(){
             // и заполняем
             arr = array_work::createAndFillArray(size, min, max);
         }
-        catch (const std::invalid_argument& e) {
+        catch (const invalid_argument& e) {
 
             cerr << "Ошибка при создании массива: " << e.what() << endl;
 
             return 1;
         }
-        
+
     } else {
         cout << "Файл содержит " << count << " чисел. Загружаем в массив." << endl;
 
@@ -155,8 +154,11 @@ int main(){
 
         // снова открываем файл и читаем числа в массив
         ifstream file3(filename);
+
         for (int i = 0; i < size; i++) {
+
             file3 >> arr[i];
+
         }
         file3.close();
     }
@@ -175,30 +177,15 @@ int main(){
 
     cout << "сумма в массиве равна = " << sum_arr << endl;
 
-    
-    ofstream file1("result.txt");
+    ofstream output_file("result.txt");
 
-    if (file1.is_open()) {
-        file1 << "использованные числа в векторе: \n";
-        // записываем каждый элемент массива
-        for (int i = 0; i < vec.size(); i++) {
-            file1 << vec[i] << " ";
-        }
-        file1 << endl;
-        file1 << "результат вычислений: \n";
-        file1 << sum_v;
-        file1 << endl;
+    if (output_file.is_open()) {
 
-        file1 << "Использованные числа в массиве: \n";
+        write_toFile::writeVectorToFile(vec, sum_v, output_file);    // передаём file
+        
+        write_toFile::writeArrayToFile(arr, size, sum_arr, output_file);
+        output_file.close();
 
-        for (int i = 0; i < size; i++) {
-            file1 << arr[i] << " ";
-        }
-        file1 << endl;
-        file1 << "результат вычислений: \n";
-        file1 << sum_arr;
-        file1 << endl;
-        file1.close();
         cout << "Данные записаны в файл.\n";
     } else {
         cout << "Не удалось открыть файл для записи.\n";
