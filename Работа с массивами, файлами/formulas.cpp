@@ -18,11 +18,11 @@ namespace random_utils {
         // проверяем, не являются ли min или max NaN
         // || - или
         if (isnan(min) || isnan(max)) {
-            throw std::invalid_argument("Ошибка: min или max — не числа (NaN)!");
+            throw invalid_argument("min или max — не числа (NaN)!");
         }
 
         if (min > max) {
-            throw std::invalid_argument("Ошибка: минимальное значение больше максимального!");
+            throw invalid_argument("минимальное значение больше максимального!");
         }
 
         // static_cast<double> - явное приведение к определённому типу данных (в данном случае к double)
@@ -39,23 +39,47 @@ namespace random_utils {
 namespace array_work {
     
     // функция для создания и заполнения массива случайными числами
-    double *createAndFillArray(int size, double min, double max) {
-        
+    double *createAndFillArray(size_t size, double min, double max) {
+  
         // выделяем память для массива
         double *arr = new double[size];
-        
-        // заполняем массив случайными числами
-        for (int i = 0; i < size; i++) {
 
-            arr[i] = random_utils::getRandomValue(min, max);
+        
+        if (size <= 0){
+
+            throw invalid_argument("размер не может быть отрицательным или равным 0");
+
+        } else {
+
+            // заполняем массив случайными числами
+            for (size_t i = 0; i < size; i++) {
+    
+                arr[i] = random_utils::getRandomValue(min, max);
+    
+            }
 
         }
-        
+
         return arr;
     }
     
     // функция для вывода массива
-    void printArray(const double* arr, int size) {
+    void printArray(const double *arr, size_t size) {
+
+        // проверка, если передали пустой массив
+        if (arr == nullptr){
+
+            throw invalid_argument("в массив ничего не записано или он не создан");
+
+        }
+
+        // проверка, если размер массива = или < 0
+        if (size <= 0){
+
+            throw invalid_argument("размер не может быть отрицательным или равным 0");
+
+        }
+
 
         for (int i = 0; i < size; i++) {
 
@@ -64,35 +88,38 @@ namespace array_work {
         }
 
     }
-    
-    // функция для удаления массива
-    void deleteArray(double* arr) {
 
-        delete[] arr;
-
-    }
 }
 
 namespace vector_mass_work{
     
+    // функция для чтения вектора из файла
     vector<double> readVectorFromFile(const string& filename){
 
+        // открываем файл
         ifstream file(filename);
 
+        // проверяем на открытие файла
         if (!file.is_open()) {
-            cerr << "Ошибка: не удалось открыть файл " << filename << endl;
-            return {}; // возвращаем пустой вектор
+
+            // данная ошибка происходит во время выполнения программы
+            throw runtime_error("Ошибка: не удалось открыть файл " + filename);
+
         }
 
         vector<double> numbers;
+
         double value;
 
         while (file >> value) {
+
             // добавляем значение в конец вектора
             numbers.push_back(value);
         }
 
+        // закрываем файл
         file.close();
+
         return numbers;
     }
 
@@ -100,7 +127,7 @@ namespace vector_mass_work{
     void printVector(const vector<double>& vec){
         
         // auto - тут компилятор автоматически определит тип переменной (в данном случае double)
-        for (const auto& num : vec){
+        for (const auto &num : vec){
             cout << num << " ";
         }
         cout << endl;             
@@ -108,15 +135,7 @@ namespace vector_mass_work{
 
     // функция для заполнения вектора рандомными числами
     void fillVectorWithRandom(vector<double>& vec, double min, double max) {
-        static bool first_call = true;
-
-        if (first_call) {
-
-            srand(time(nullptr));
-
-            first_call = false;
-        }
-        
+                
         for (auto& element : vec) {
 
             // используем функцию из random_utils для генерации значений
@@ -126,18 +145,11 @@ namespace vector_mass_work{
 }
 
 namespace write_toFile{
-
     // функция для записи вектора в файл
     void writeVectorToFile(const vector<double>& vec, double sum_v,  ofstream& file) {
         
         if (file.is_open()){
-            file << "использованные числа в векторе: \n";
-
-            for (int i = 0; i < vec.size(); i++) {
-                file << vec[i] << " ";
-            }
-            file << endl;
-            file << "результат вычислений: \n";
+            file << "результат вычислений c помощью вектора: \n";
             file << sum_v;
             file << endl;
             cout << "Данные вектора записаны в файл.\n";
@@ -148,23 +160,65 @@ namespace write_toFile{
     }
 
     // Функция для записи массива и его результата в файл
-    void writeArrayToFile(const double* arr, int size, double sum_arr,  ofstream& file) {
+    void writeArrayToFile(const double *arr, size_t size, double sum_arr,  ofstream& file) {
+
+        // проверка, если передали пустой массив
+        if (arr == nullptr){
+
+            throw invalid_argument("в массив ничего не записано или он не создан");
+
+        }
 
         if (file.is_open()) {
 
-            file << "Использованные числа в массиве: \n";
-            for (int i = 0; i < size; i++){
-                file << arr[i] << " ";
-            }
-
-            file << endl;
-            file << "результат вычислений: \n";
+            file << "результат вычислений с помощью массива: \n";
             file << sum_arr;
             file << endl;
             cout << "Данные массива записаны в файл.\n";
         } else {
             cout << "Не удалось открыть файл для записи массива.\n";
         }
+    }
+
+}
+
+namespace result {
+
+    // функция для решения задачи с помощью вектора
+    double res_vector(const vector<double>& vec){
+        
+        double sum_v = 0.0;
+
+        for (int i = 0; i < vec.size(); i++){
+
+            double res = sqrt(abs(vec[i])) - vec[i];
+    
+            sum_v += res * res;
+        }
+
+        return sum_v;
+    }
+    
+    // функция для решения задачи с помощью массива
+    double res_mass (const double *arr, size_t size){
+
+        // проверка, если передали пустой массив
+        if (arr == nullptr){
+
+            throw invalid_argument("в массив ничего не записано или он не создан");
+
+        }
+
+        double sum_arr = 0.0;
+
+        for (int i = 0; i < size; i++) {
+
+            double res = sqrt(abs(arr[i])) - arr[i];
+    
+            sum_arr += res * res;
+        }
+
+        return sum_arr;
     }
 
 }

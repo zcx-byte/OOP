@@ -29,25 +29,40 @@ int main(){
 
     SetConsoleOutputCP(CP_UTF8);
 
+    // вызываем функцию для заполнения массива или вектора случайными числами
+    srand(time(nullptr)); 
+
     const string filename = "mass.txt";
 
-    cout << "=сначала с помощью вектора=" << endl;
+    // ! Вектор
+    cout << "=СНАЧАЛА С ПОМОЩЬЮ ВЕКТОРА=" << endl;
 
     // читаем вектор из файла
     // данная функция открывает, читает и закрывает файл
     // простыми словами вектор - это массив, в который можно добавлять элементы и он сам увеличивается
     // не нужно вручную выделять и освобождать память, к элементам можно обращаться так же по индексу
     // сам "растянется", если заранее не известен размер
-    vector<double> vec = vector_mass_work::readVectorFromFile(filename);
+    vector<double> vec;
+
+    try{
+
+        vec = vector_mass_work::readVectorFromFile(filename);
+
+    } catch (const runtime_error& e) {
+
+        cerr << "Ошибка при заполнении вектора: " << e.what() << endl;
+
+        return 1;
+    }
 
     if (vec.empty()){
 
         cout << "Файл пуст или не найден. Используем заполнение случайными числами" << endl;
 
         int min, max;
-        int size;
+        size_t size;
 
-        cout << "Введите размер массива: \n";
+        cout << "Введите размер вектора: \n";
         cin >> size;
 
         cout << "введите диапазон заполнения массива: \n";
@@ -62,8 +77,8 @@ int main(){
         vec.resize(size);
         
         try {
-        // используем нашу функцию по заполнению вектора рандомными числами
-        vector_mass_work::fillVectorWithRandom(vec, min, max);
+            // используем нашу функцию по заполнению вектора рандомными числами
+            vector_mass_work::fillVectorWithRandom(vec, min, max);
         }
 
         catch (const invalid_argument& e) {
@@ -77,25 +92,17 @@ int main(){
     cout << "числа, использованные в векторе:" << endl;
     vector_mass_work::printVector(vec);
 
-    double sum_v = 0.0;
-
-    // считаем по нашей формуле и вычисляем сумму
-    for (int i = 0; i < vec.size(); i++){
-
-        double res = sqrt(abs(vec[i])) - vec[i];
-
-        sum_v += res * res;
-    }
+    // ! решаем с помощью вектора
+    double sum_v = result::res_vector(vec);
 
     // выводим сумму
     cout << "сумма в векторе равна = " << sum_v << endl;
 
-    cout << "=Теперь с помощью массива=" << endl;
+    // ! Массив
+    cout << "=ТЕПЕРЬ С ПОМОЩЬЮ МАССИВА=" << endl;
 
     double *arr = nullptr;  // по факту пока просто создаём массив
-    int size = 0;   // соответственно и размер у него пока 0
-
-    double sum_arr = 0.0;
+    size_t size = 0;   // соответственно и размер у него пока 0
 
     // снова его открываем для чтения
     ifstream input_file(filename);
@@ -131,12 +138,11 @@ int main(){
         cout << "до: \n";
         cin >> max;
 
-        // теперь уже выделяем память
-        arr = new double[size];
-
         try {
+
             // и заполняем
             arr = array_work::createAndFillArray(size, min, max);
+
         }
         catch (const invalid_argument& e) {
 
@@ -165,14 +171,30 @@ int main(){
 
     cout << "Числа, использованные в массиве" << endl;
 
-    array_work::printArray(arr, size);
+    try{
 
-    // вычисляем сумму для массива
-    for (int i = 0; i < size; i++) {
+        array_work::printArray(arr, size);
 
-        double res = sqrt(abs(arr[i])) - arr[i];
+    } catch (const invalid_argument& e) {
+        
+        cerr << "Ошибка при создании массива: " << e.what() << endl;
 
-        sum_arr += res * res;
+        return 1;
+    }
+
+    // ! решаем с помощью массива
+    double sum_arr;
+
+    // проверяем на исключение
+    try {
+
+        sum_arr = result::res_mass(arr, size);
+
+    } catch (const invalid_argument& e) {
+        
+        cerr << "Ошибка: " << e.what() << endl;
+
+        return 1;
     }
 
     cout << "сумма в массиве равна = " << sum_arr << endl;
@@ -181,17 +203,31 @@ int main(){
 
     if (output_file.is_open()) {
 
-        write_toFile::writeVectorToFile(vec, sum_v, output_file);    // передаём file
+        // записываем результат вектора в файл
+        write_toFile::writeVectorToFile(vec, sum_v, output_file);       // передаём file
+
+        try { 
+
+            // записываем результат массива в файл
+            write_toFile::writeArrayToFile(arr, size, sum_arr, output_file);
+
+        } catch (const invalid_argument& e) {
         
-        write_toFile::writeArrayToFile(arr, size, sum_arr, output_file);
+            cerr << "Ошибка при записи массива: " << e.what() << endl;
+    
+            return 1;
+        }
+
         output_file.close();
 
-        cout << "Данные записаны в файл.\n";
     } else {
+
         cout << "Не удалось открыть файл для записи.\n";
+
     }
 
-    array_work::deleteArray(arr);
+    // очищаем массив
+    delete[] arr;
 
     return 0;
 
