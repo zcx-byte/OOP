@@ -227,7 +227,7 @@ namespace result {
 
     // функция для решения задачи с помощью вектора
     template<typename T>
-    T res_vector(const std::vector<T>& vec){
+    T res_vector(const vector<T>& vec){
         
         T sum_v = T{0}; // инициализация нулём нужного типа
 
@@ -265,7 +265,7 @@ namespace result {
     }
 
     // явное инстанцирование для double, чтобы использовать в других .cpp файлах
-    template double res_vector<double>(const std::vector<double>& vec);
+    template double res_vector<double>(const vector<double>& vec);
     template double res_mass<double>(const double *arr, size_t size);
 
 }
