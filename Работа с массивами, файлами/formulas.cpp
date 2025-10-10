@@ -89,6 +89,25 @@ namespace array_work {
 
     }
 
+    void fillMass(double *arr, size_t size){
+
+        // проверка, если размер массива = или < 0
+        if (size <= 0){
+
+            throw invalid_argument("размер не может быть отрицательным или равным 0");
+
+        }
+
+        for (int i = 0; i < size; ++i) {
+
+            cout << "Элемент " << i + 1 << ": ";
+
+            cin >> arr[i];
+
+        }
+
+    }
+
 }
 
 namespace vector_mass_work{
@@ -128,8 +147,10 @@ namespace vector_mass_work{
         
         // auto - тут компилятор автоматически определит тип переменной (в данном случае double)
         for (const auto &num : vec){
+
             cout << num << " ";
         }
+
         cout << endl;             
     }
 
@@ -140,11 +161,31 @@ namespace vector_mass_work{
 
             // используем функцию из random_utils для генерации значений
             element = random_utils::getRandomValue(min, max);
+            
         }
     }
+
+    // функция для заполнения вектора вручную
+    vector<double> fillVector(vector<double>& vec, size_t size) {
+
+        for (size_t i = 0; i < size; ++i) {
+
+            double value;
+
+            cout << "Элемент " << i + 1 << ": ";
+
+            cin >> value;
+
+            vec.push_back(value);
+        }
+
+        return vec;
+    }
+
 }
 
 namespace write_toFile{
+
     // функция для записи вектора в файл
     void writeVectorToFile(const vector<double>& vec, double sum_v,  ofstream& file) {
         
@@ -220,5 +261,41 @@ namespace result {
 
         return sum_arr;
     }
+
+}
+
+namespace save_res {
+
+    // функция для общего записи результата в файл
+    void saveResultsToFile(const string& filename, 
+        const vector<double>& vec, double sum_v,
+        const double* arr, size_t size, double sum_arr){
+
+            ofstream output_file(filename);
+
+            if (output_file.is_open()) {
+
+                // Записываем результат вектора в файл
+                write_toFile::writeVectorToFile(vec, sum_v, output_file);
+        
+                try { 
+                    // Записываем результат массива в файл
+                    write_toFile::writeArrayToFile(arr, size, sum_arr, output_file);
+        
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "Ошибка при записи массива: " << e.what() << std::endl;
+                    output_file.close();
+                    throw;  // пробрасываем исключение дальше
+                }
+        
+                output_file.close();
+        
+            } else {
+                cout << "Не удалось открыть файл для записи.\n";
+
+                throw runtime_error("Не удалось открыть файл для записи");
+            }
+
+        }
 
 }

@@ -17,6 +17,8 @@ namespace array_work {
 
     // функция для вывода массива
     void printArray(const double *arr, size_t size);
+
+    void fillMass(double *arr, size_t size);
 }
 
 namespace vector_mass_work {
@@ -28,6 +30,9 @@ namespace vector_mass_work {
 
     // функция для заполнения вектора рандомными числами
     void fillVectorWithRandom(vector<double>& vec, double min, double max);
+
+    // функция по ручному заполнению вектора
+    vector<double> fillVector(vector<double>& vec, size_t size);
 }
 
 namespace write_toFile {
@@ -44,6 +49,15 @@ namespace result {
 
     // функция для вычисления результата с помощью массива
     double res_mass(const double *arr, size_t size);
+}
+
+namespace save_res {
+
+    // функция для общего записи результата в файл
+    void saveResultsToFile(const string& filename, 
+        const vector<double>& vec, double sum_v,
+        const double* arr, size_t size, double sum_arr);
+
 }
 
 #endif
