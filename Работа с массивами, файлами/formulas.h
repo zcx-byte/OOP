@@ -18,10 +18,12 @@ namespace array_work {
     // функция для вывода массива
     void printArray(const double *arr, size_t size);
 
+    // для заполнения массива вручную
     void fillMass(double *arr, size_t size);
 }
 
 namespace vector_mass_work {
+
     // функция для чтения вектора из файла
     vector<double> readVectorFromFile(const string& filename);
 
@@ -44,11 +46,13 @@ namespace write_toFile {
 }
 
 namespace result {
-    // функция для вычисления результата с помощью вектора
-    double res_vector(const vector<double>& vec);
+    // функция для вычисления результата с помощью вектора в виде шаблона
+    template<typename T>
+    T res_vector(const std::vector<T>& vec);
 
-    // функция для вычисления результата с помощью массива
-    double res_mass(const double *arr, size_t size);
+    // функция для вычисления результата с помощью массива в виде шаблона
+    template<typename T>
+    T res_mass(const T *arr, size_t size);
 }
 
 namespace save_res {

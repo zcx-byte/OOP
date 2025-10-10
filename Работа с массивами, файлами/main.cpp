@@ -18,7 +18,7 @@
 
 // для работы с файлами
 #include <fstream>      
-#include <iostream> 
+#include <iostream>
 
 // для работы с типом данных vector
 #include <vector>
@@ -174,6 +174,7 @@ int main(){
         cout << "=ТЕПЕРЬ С ИСПОЛЬЗУЕМ МАССИВ=" << endl;
 
         double *arr = nullptr;  // по факту пока просто создаём массив
+
         size_t size = 0;   // соответственно и размер у него пока 0
 
         // снова его открываем для чтения
@@ -216,7 +217,7 @@ int main(){
                 arr = array_work::createAndFillArray(size, min, max);
 
             }
-            catch (const invalid_argument& e) {
+            catch (const invalid_argument &e) {
 
                 cerr << "Ошибка при создании массива: " << e.what() << endl;
 
@@ -247,7 +248,7 @@ int main(){
 
             array_work::printArray(arr, size);
 
-        } catch (const invalid_argument& e) {
+        } catch (const invalid_argument &e) {
             
             cerr << "Ошибка при создании массива: " << e.what() << endl;
 
@@ -282,53 +283,53 @@ int main(){
     if (choose == 3) {
         int min, max;
         size_t size_v;
-        std::cout << "Введите размер вектора: ";
-        std::cin >> size_v;
-        std::cout << "Введите диапазон случайных чисел (от): ";
-        std::cin >> min;
-        std::cout << "до: ";
-        std::cin >> max;
+         cout << "Введите размер вектора: ";
+         cin >> size_v;
+         cout << "Введите диапазон случайных чисел (от): ";
+         cin >> min;
+         cout << "до: ";
+         cin >> max;
     
         try {
 
             vec.resize(size_v);
             vector_mass_work::fillVectorWithRandom(vec, min, max);
     
-            std::cout << "Числа в векторе: ";
+            cout << "Числа в векторе: ";
             vector_mass_work::printVector(vec);
     
             size_t size_arr;
-            std::cout << "Введите размер массива: ";
-            std::cin >> size_arr;
-            std::cout << "Введите диапазон случайных чисел (от): ";
-            std::cin >> min;
-            std::cout << "до: ";
-            std::cin >> max;
+            cout << "Введите размер массива: ";
+            cin >> size_arr;
+            cout << "Введите диапазон случайных чисел (от): ";
+            cin >> min;
+            cout << "до: ";
+            cin >> max;
     
             double* arr = array_work::createAndFillArray(size_arr, min, max);
     
-            std::cout << "Числа в массиве: ";
+            cout << "Числа в массиве: ";
             array_work::printArray(arr, size_arr);
     
             double sum_v = result::res_vector(vec);
             double sum_arr = result::res_mass(arr, size_arr);
     
-            std::cout << "Сумма вектора = " << sum_v << std::endl;
-            std::cout << "Сумма массива = " << sum_arr << std::endl;
+             cout << "Сумма вектора = " << sum_v <<  endl;
+             cout << "Сумма массива = " << sum_arr <<  endl;
     
             save_res::saveResultsToFile("result.txt", vec, sum_v, arr, size_arr, sum_arr);
     
             delete[] arr;
         }
 
-        catch (const std::invalid_argument& e) {
+        catch (const  invalid_argument& e) {
 
-            std::cerr << "Ошибка при генерации или заполнении: " << e.what() << std::endl;
+             cerr << "Ошибка при генерации или заполнении: " << e.what() <<  endl;
 
         }
-        catch (const std::runtime_error& e) {
+        catch (const  runtime_error& e) {
 
-            std::cerr << "Ошибка выполнения: " << e.what() << std::endl;
+             cerr << "Ошибка выполнения: " << e.what() <<  endl;
 
         }
     }

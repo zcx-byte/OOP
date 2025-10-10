@@ -226,13 +226,14 @@ namespace write_toFile{
 namespace result {
 
     // функция для решения задачи с помощью вектора
-    double res_vector(const vector<double>& vec){
+    template<typename T>
+    T res_vector(const std::vector<T>& vec){
         
-        double sum_v = 0.0;
+        T sum_v = T{0}; // инициализация нулём нужного типа
 
-        for (int i = 0; i < vec.size(); i++){
+        for (size_t i = 0; i < vec.size(); i++){
 
-            double res = sqrt(abs(vec[i])) - vec[i];
+            T res = sqrt(abs(vec[i])) - vec[i];
     
             sum_v += res * res;
         }
@@ -241,7 +242,8 @@ namespace result {
     }
     
     // функция для решения задачи с помощью массива
-    double res_mass (const double *arr, size_t size){
+    template<typename T>
+    T res_mass (const T *arr, size_t size){
 
         // проверка, если передали пустой массив
         if (arr == nullptr){
@@ -250,17 +252,21 @@ namespace result {
 
         }
 
-        double sum_arr = 0.0;
+        T sum_arr = T{0}; // инициализация нулём нужного типа
 
-        for (int i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
 
-            double res = sqrt(abs(arr[i])) - arr[i];
+            T res = sqrt(abs(arr[i])) - arr[i];
     
             sum_arr += res * res;
         }
 
         return sum_arr;
     }
+
+    // явное инстанцирование для double, чтобы использовать в других .cpp файлах
+    template double res_vector<double>(const std::vector<double>& vec);
+    template double res_mass<double>(const double *arr, size_t size);
 
 }
 
@@ -297,5 +303,4 @@ namespace save_res {
             }
 
         }
-
 }
