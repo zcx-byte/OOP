@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <windows.h>
-#include "formulas.h"
+#include "include/formulas.h"
 #include <cmath>
 #include <cassert>
 #include <stdexcept>   
@@ -20,10 +20,16 @@
 #include <fstream>      
 #include <iostream>
 
+// ! все изменения на гит-бе
+
 // для работы с типом данных vector
 #include <vector>
 
 using namespace std;
+
+// ! компиляция:
+// ! g++ .\src\array_work.cpp .\src\random_utils.cpp .\src\result.cpp .\src\save_res.cpp 
+// !.\src\vector_mass_work.cpp .\src\write_toFile.cpp .\main.cpp -o program.exe
 
 int main(){
 
@@ -189,7 +195,8 @@ int main(){
 
         double value;
         int count = 0;
-
+        
+        // todo в отдельную функцию
         while (input_file >> value){
             count++;
         }
@@ -197,7 +204,6 @@ int main(){
         input_file.close();
 
         if (count == 0) {
-            cout << "Файл пуст, используем заполнение рандомными числами" << endl;
 
             int min, max;
 
@@ -225,24 +231,32 @@ int main(){
             }
 
         } else {
-            cout << "Файл содержит " << count << " чисел. Загружаем в массив." << endl;
-
             size = count;
 
             arr = new double[size];
 
-            // снова открываем файл и читаем числа в массив
-            ifstream file3(filename);
+            try{
+                array_work::fillArrFromFile(filename, arr, size);
 
-            for (int i = 0; i < size; i++) {
+            } catch (const runtime_error& e) {
 
-                file3 >> arr[i];
+                cerr << "Ошибка при заполнении массива из файла: " << e.what() << endl;
+                delete[] arr;
+                return 1;
 
+            } catch (const invalid_argument& e) {
+
+                cerr << "Ошибка при заполнении массива из файла: " << e.what() << endl;
+                delete[] arr;
+                return 1;
             }
-            file3.close();
-        }
 
-        cout << "Числа, использованные в массиве" << endl;
+            if (arr == nullptr) {
+                cerr << "Не удалось загрузить массив из файла." << endl;
+                return 1;
+            }
+    
+            cout << "Числа, использованные в массиве" << endl;
 
         try{
 
@@ -279,8 +293,10 @@ int main(){
 
         return 0;
     }
+}
 
     if (choose == 3) {
+
         int min, max;
         size_t size_v;
          cout << "Введите размер вектора: ";
@@ -315,6 +331,7 @@ int main(){
             double sum_arr = result::res_mass(arr, size_arr);
     
              cout << "Сумма вектора = " << sum_v <<  endl;
+
              cout << "Сумма массива = " << sum_arr <<  endl;
     
             save_res::saveResultsToFile("result.txt", vec, sum_v, arr, size_arr, sum_arr);

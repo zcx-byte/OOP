@@ -20,6 +20,8 @@ namespace array_work {
 
     // для заполнения массива вручную
     void fillMass(double *arr, size_t size);
+
+    void fillArrFromFile(const string& filename, double* arr, size_t size);
 }
 
 namespace vector_mass_work {
