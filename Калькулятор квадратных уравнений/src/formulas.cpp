@@ -1,4 +1,4 @@
-#include "formulas.h"
+#include "../include/formulas.h"
 #include <cmath>
 #include <stdexcept>
 
