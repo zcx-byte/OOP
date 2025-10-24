@@ -29,7 +29,7 @@ using namespace std;
 
 // ! компиляция:
 // ! g++ .\src\array_work.cpp .\src\random_utils.cpp .\src\result.cpp .\src\save_res.cpp 
-// !.\src\vector_mass_work.cpp .\src\write_toFile.cpp .\main.cpp -o program.exe
+// !.\src\vector_mass_work.cpp .\main.cpp -o program.exe
 
 int main(){
 

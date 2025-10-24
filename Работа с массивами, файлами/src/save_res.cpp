@@ -15,11 +15,11 @@ namespace save_res {
             if (output_file.is_open()) {
 
                 // записываем результат вектора в файл
-                write_toFile::writeVectorToFile(vec, sum_v, output_file);
+                vector_mass_work::writeVectorToFile(vec, sum_v, output_file);
 
                 try {
                     // записываем результат массива в файл
-                    write_toFile::writeArrayToFile(arr, size, sum_arr, output_file);
+                    array_work::writeArrayToFile(arr, size, sum_arr, output_file);
 
                 } catch (const std::invalid_argument& e) {
                     std::cerr << "Ошибка при записи массива: " << e.what() << std::endl;

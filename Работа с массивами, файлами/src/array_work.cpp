@@ -92,4 +92,22 @@ namespace array_work {
         file.close();
         std::cout << "Файл " << filename << " успешно загружен в массив размером " << size << "." << std::endl;
     }
+
+    // функция для записи массива и его результата в файл
+    void writeArrayToFile(const double *arr, size_t size, double sum_arr,  std::ofstream& file) {
+
+        // проверка, если передали пустой массив
+        if (arr == nullptr){
+            throw std::invalid_argument("в массив ничего не записано или он не создан");
+        }
+
+        if (file.is_open()) {
+            file << "результат вычислений с помощью массива: \n";
+            file << sum_arr;
+            file << std::endl;
+            std::cout << "Данные массива записаны в файл.\n";
+        } else {
+            std::cout << "Не удалось открыть файл для записи массива.\n";
+        }
+    }
 }

@@ -21,7 +21,11 @@ namespace array_work {
     // для заполнения массива вручную
     void fillMass(double *arr, size_t size);
 
+    // функция для заполнения массива из файла
     void fillArrFromFile(const string& filename, double* arr, size_t size);
+
+    // функция для записи массива в файл
+    void writeArrayToFile(const double *arr, size_t size, double sum_arr,  std::ofstream& file);
 }
 
 namespace vector_mass_work {
@@ -37,14 +41,9 @@ namespace vector_mass_work {
 
     // функция по ручному заполнению вектора
     vector<double> fillVector(vector<double>& vec, size_t size);
-}
 
-namespace write_toFile {
     // функция для записи вектора в файл
-    void writeVectorToFile(const vector<double>& vec, double sum_v, ofstream& file);
-
-    // функция для записи массива и его результата в файл
-    void writeArrayToFile(const double* arr, size_t size, double sum_arr, ofstream& file);
+    void writeVectorToFile(const std::vector<double>& vec, double sum_v,  std::ofstream& file);
 }
 
 namespace result {

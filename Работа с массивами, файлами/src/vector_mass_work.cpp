@@ -64,4 +64,17 @@ namespace vector_mass_work{
         return vec;
     }
 
+    // функция для записи вектора в файл
+    void writeVectorToFile(const std::vector<double>& vec, double sum_v,  std::ofstream& file) {
+
+        if (file.is_open()){
+            file << "результат вычислений c помощью вектора: \n";
+            file << sum_v;
+            file << std::endl;
+            std::cout << "Данные вектора записаны в файл.\n";
+        } else {
+            std::cout << "Не удалось открыть файл для записи вектора.\n";
+        }
+    }
+
 }
