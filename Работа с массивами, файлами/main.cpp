@@ -20,8 +20,6 @@
 #include <fstream>      
 #include <iostream>
 
-// ! все изменения на гит-бе
-
 // для работы с типом данных vector
 #include <vector>
 
@@ -30,7 +28,7 @@ using namespace std;
 // ! компиляция:
 // ! g++ .\src\array_work.cpp .\src\random_utils.cpp .\src\result.cpp .\src\save_res.cpp 
 // !.\src\vector_mass_work.cpp .\main.cpp -o program.exe
-
+    
 int main(){
 
     int choose;
@@ -85,7 +83,7 @@ int main(){
         
         try{
 
-            array_work::fillMass(arr, size_arr);
+            array_work::fillArr(arr, size_arr);
 
         } catch (const invalid_argument& e){
 
@@ -124,7 +122,7 @@ int main(){
         // сам "растянется", если заранее не известен размер
         try{
 
-            vec = vector_mass_work::readVectorFromFile(filename);
+            vec = file_work::readVectorFromFile(filename);
 
         } catch (const runtime_error& e) {
 
@@ -194,13 +192,9 @@ int main(){
         }
 
         double value;
-        int count = 0;
         
-        // todo в отдельную функцию
-        while (input_file >> value){
-            count++;
-        }
-
+        int count = file_work::count_values(input_file);
+        
         input_file.close();
 
         if (count == 0) {
@@ -236,7 +230,7 @@ int main(){
             arr = new double[size];
 
             try{
-                array_work::fillArrFromFile(filename, arr, size);
+                file_work::fillArrFromFile(filename, arr, size);
 
             } catch (const runtime_error& e) {
 

@@ -1,85 +1,120 @@
 #include <windows.h>
-#include "../include/formulas.h" // Подключаем наш заголовок
+#include "../include/formulas.h" // подключаем наш заголовок
 #include <iostream>
 #include <vector>
-#include <cassert> // Подключаем assert
-#include <cmath>   // Подключаем cmath для abs и sqrt
+#include <cassert> // подключаем assert
+#include <cmath>   // подключаем cmath для abs и sqrt
+
+using namespace std;
 
 int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    std::cout << "Запуск тестов...\n";
+    cout << "запуск тестов...\n";
 
-    // --- Тестируем функцию res_vector ---
-    std::cout << "Тестируем res_vector...\n";
+    // --- тестируем функцию res_vector ---
+    cout << "тестируем res_vector...\n";
 
-    // Создадим вектор с простыми числами
-    std::vector<double> test_vec = {0.0, 1.0, 4.0};
+    // создадим вектор с простыми числами
+    vector<double> test_vec_1 = {0.0, 1.0, 4.0};
 
-    // Рассчитаем вручную:
+    // рассчитаем вручную:
     // (sqrt(|0|) - 0)^2 + (sqrt(|1|) - 1)^2 + (sqrt(|4|) - 4)^2
     // (sqrt(0) - 0)^2 + (sqrt(1) - 1)^2 + (sqrt(4) - 4)^2
     // (0 - 0)^2 + (1 - 1)^2 + (2 - 4)^2
     // 0^2 + 0^2 + (-2)^2
     // 0 + 0 + 4 = 4
-    double expected_result = 4.0;
+    double expected_result_1 = 4.0;
 
-    // Вызываем нашу функцию
-    double actual_result = result::res_vector(test_vec);
+    vector<double> test_vec_2 = {-1.0, -4.0, 9.0};
+    double expected_result_2 = 76.0;
 
-    // Проверяем, равен ли результат ожидаемому
-    assert(actual_result == expected_result);
-    std::cout << "  res_vector({0, 1, 4}) = " << actual_result << " - OK\n";
+    vector<double> test_vec_3 = {0.25, 2.25, 6.25};
+    double expected_result_3 = 14.6875;
 
-    // --- Тестируем функцию res_mass ---
-    std::cout << "Тестируем res_mass...\n";
+    // вызываем нашу функцию
+    // todo описание функции
+    double actual_result_1 = result::res_vector(test_vec_1);
+    double actual_result_2 = result::res_vector(test_vec_2);
+    double actual_result_3 = result::res_vector(test_vec_3);
 
-    // Создадим простой массив
-    double test_arr[] = {0.0, 1.0, 4.0};
-    size_t size = 3;
+    // проверяем, равен ли результат ожидаемому
+    assert(actual_result_1 == expected_result_1);
+    cout << "  res_vector_1({0, 1, 4}) = " << actual_result_1 << " - ok\n";
 
-    // Ожидаемый результат тот же
-    double expected_result_arr = 4.0;
+    assert(actual_result_2 == expected_result_2);
+    cout << "  res_vector_2({-1.0, -4.0, 9.0}) = " << actual_result_2 << " - ok\n";
 
-    // Вызываем функцию для массива
-    double actual_result_arr = result::res_mass(test_arr, size);
+    assert(actual_result_3 == expected_result_3);
+    cout << "  res_vector({0.25, 2.25, 6.25}) = " << actual_result_3 << " - ok\n";
 
-    // Проверяем результат
-    assert(actual_result_arr == expected_result_arr);
-    std::cout << "  res_mass({0, 1, 4}) = " << actual_result_arr << " - OK\n";
+    // --- тестируем функцию res_mass ---
+    cout << "тестируем res_mass...\n";
 
-    // --- Тестируем функцию getRandomValue ---
-    std::cout << "Тестируем getRandomValue...\n";
+    // создадим простой массив
+    double test_arr_1[] = {0.0, 1.0, 4.0};
+    size_t size_1 = 3;
 
-    // Проверим, что значение в нужном диапазоне
+    // ожидаемый результат тот же
+    double expected_result_arr_1 = 4.0;
+
+    double test_arr_2[] = {-1.0, -4.0, 9.0};
+    size_t size_2 = 3;
+
+    double expected_result_arr_2 = 76.0;
+
+    double test_arr_3[] = {0.25, 2.25, 6.25};
+    size_t size_3 = 3;
+
+    double expected_result_arr_3 = 14.6875;
+
+    // вызываем функцию для массива
+    double actual_result_arr_1 = result::res_mass(test_arr_1, size_1);
+    double actual_result_arr_2 = result::res_mass(test_arr_2, size_2);
+    double actual_result_arr_3 = result::res_mass(test_arr_3, size_3);
+
+    // проверяем результат
+    assert(actual_result_arr_1 == expected_result_arr_1);
+    cout << "  res_mass_1({0, 1, 4}) = " << actual_result_arr_1 << " - ok\n";
+
+    assert(actual_result_arr_2 == expected_result_arr_2);
+    cout << "  res_mass_2({0-1.0, -4.0, 9.0}) = " << actual_result_arr_2 << " - ok\n";
+
+    assert(actual_result_arr_3 == expected_result_arr_3);
+    cout << "  res_mass_3({0.25, 2.25, 6.25}) = " << actual_result_arr_3 << " - ok\n";
+
+    // --- тестируем функцию getRandomValue ---
+    cout << "тестируем getRandomValue...\n";
+
+    // проверим, что значение в нужном диапазоне
     double min = 5.0;
     double max = 10.0;
     double random_val = random_utils::getRandomValue(min, max);
 
-    // Проверяем, что значение не меньше минимума
+    // проверяем, что значение не меньше минимума
     assert(random_val >= min);
-    // Проверяем, что значение не больше максимума
+    // проверяем, что значение не больше максимума
     assert(random_val <= max);
-    std::cout << "  getRandomValue(5, 10) = " << random_val << " - OK (в диапазоне)\n";
+    cout << "  getRandomValue(5, 10) = " << random_val << " - ok (в диапазоне)\n";
 
-    // --- Тестируем функцию fillVectorWithRandom ---
-    std::cout << "Тестируем fillVectorWithRandom...\n";
+    // --- тестируем функцию fillVectorWithRandom ---
+    cout << "тестируем fillVectorWithRandom...\n";
 
-    std::vector<double> vec_to_fill(3); // Создаем вектор размером 3
+    vector<double> vec_to_fill(3); // создаем вектор размером 3
     double fill_min = 1.0;
     double fill_max = 2.0;
 
-    // Заполняем вектор случайными числами
+    // заполняем вектор случайными числами
     vector_mass_work::fillVectorWithRandom(vec_to_fill, fill_min, fill_max);
 
-    // Проверим, что все элементы в нужном диапазоне
+    // проверим, что все элементы в нужном диапазоне
     for (double val : vec_to_fill) {
         assert(val >= fill_min);
         assert(val <= fill_max);
     }
-    std::cout << "  fillVectorWithRandom заполнил 3 элемента в диапазоне [1, 2] - OK\n";
+    cout << "  fillVectorWithRandom заполнил 3 элемента в диапазоне [1, 2] - ok\n";
 
-    std::cout << "Все тесты пройдены!\n";
+    cout << "все тесты пройдены!\n";
     return 0;
 }

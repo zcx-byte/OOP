@@ -5,34 +5,10 @@
 
 namespace vector_mass_work{
 
-    // функция для чтения вектора из файла
-    std::vector<double> readVectorFromFile(const std::string& filename){
-
-        // открываем файл
-        std::ifstream file(filename);
-
-        // проверяем на открытие файла
-        if (!file.is_open()) {
-            // данная ошибка происходит во время выполнения программы
-            throw std::runtime_error("Ошибка: не удалось открыть файл " + filename);
-        }
-
-        std::vector<double> numbers;
-        double value;
-
-        // читаем числа из файла пока есть данные
-        while (file >> value) {
-            // добавляем значение в конец вектора
-            numbers.push_back(value);
-        }
-
-        // закрываем файл
-        file.close();
-
-        return numbers;
-    }
-
-    // функция для вывода вектора в консоль
+    /*
+    функция для вывода вектора
+    принимает константную ссылку на вектор
+    */
     void printVector(const std::vector<double>& vec){
 
         // auto - тут компилятор автоматически определит тип переменной (в данном случае double)
@@ -42,7 +18,10 @@ namespace vector_mass_work{
         std::cout << std::endl;
     }
 
-    // функция для заполнения вектора рандомными числами
+    /*
+    функция для заполнения вектора случайными числами
+    принимает ссылку на вектор и диапазон заполнения
+    */
     void fillVectorWithRandom(std::vector<double>& vec, double min, double max) {
 
         for (auto& element : vec) {
@@ -51,7 +30,11 @@ namespace vector_mass_work{
         }
     }
 
-    // функция для ручного заполнения вектора
+    /*
+    функция для ручного заполнения вектора
+    принимает ссылку на вектор и его размер
+    возвращает заполненный вектор
+    */
     std::vector<double> fillVector(std::vector<double>& vec, size_t size) {
 
         for (size_t i = 0; i < size; ++i) {
@@ -62,19 +45,6 @@ namespace vector_mass_work{
         }
 
         return vec;
-    }
-
-    // функция для записи вектора в файл
-    void writeVectorToFile(const std::vector<double>& vec, double sum_v,  std::ofstream& file) {
-
-        if (file.is_open()){
-            file << "результат вычислений c помощью вектора: \n";
-            file << sum_v;
-            file << std::endl;
-            std::cout << "Данные вектора записаны в файл.\n";
-        } else {
-            std::cout << "Не удалось открыть файл для записи вектора.\n";
-        }
     }
 
 }

@@ -6,7 +6,10 @@
 
 namespace random_utils {
 
-    // функция для генерации случайного числа в диапазоне [min, max]
+    /* 
+    функция для генерации случайного числа в диапазоне [min, max]
+    возвращает случайное вещественное (double) число в диапазоне [min, max)
+    */    
     double getRandomValue(double min, double max) {
 
         // проверяем, не являются ли min или max NaN
