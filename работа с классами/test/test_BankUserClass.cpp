@@ -9,7 +9,7 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    std::cout << "Запуск простых тестов...\n";
+    std::cout << "Запуск тестов...\n";
 
     // Тест 1: Создание пользователя и получение данных
     {
@@ -58,6 +58,46 @@ int main() {
 
         assert(u1.to_string() == "Name: Петя, Bank ID: BNK1, Balance: 100.000000");
 
+    }
+
+    {
+        const std::string filename = "test/test_save.txt";
+
+        BankUserClass user("Анна", "BNK1", 1000.0);
+        
+        user.save_to_file_append(filename);
+
+        // Проверка, что данные записаны корректно
+        std::ifstream file(filename);
+        assert(file.is_open());
+
+        std::string loadedName;
+        std::string loadedID;
+        double loadedBalance;
+        file >> loadedName >> loadedID >> loadedBalance;
+        file.close();
+
+        assert(loadedName == user.get_Name("BNK1"));
+        assert(loadedBalance == user.get_balance("BNK1"));
+        assert(loadedID == user.get_bankID("BNK1"));
+
+    }
+
+    {
+        const std::string filename = "test/test_load.txt";
+    
+        BankUserClass user("Анна", "BNK1", 1000.0);
+    
+        std::ifstream inputFile(filename);
+        assert(inputFile.is_open() && "Не удалось открыть test/test_load.txt");
+    
+        user.load_from_file(inputFile);
+        inputFile.close();
+    
+        // Проверки (исправлено: "BNK1" в кавычках!)
+        assert(user.get_Name("BNK1") == "Carol");
+        assert(user.get_bankID("BNK1") == "BNK1");  
+        assert(user.get_balance("BNK1") == 1234.56);
     }
 
     std::cout << "Все тесты пройдены!\n";
