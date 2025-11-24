@@ -70,11 +70,6 @@ public:
     /// @note При успешной операции выводится сообщение в std::cout.
     void change_name(const std::string& new_name, const std::string& bank_ID);
 
-    /// @brief Конструктор копирования — создаёт новый объект как копию существующего.
-    /// @param other Существующий объект, данные которого копируются.
-    /// @note При вызове выводится сообщение в std::cout.
-    BankUserClass(const BankUserClass& other);
-
     /// @brief Сохраняет текущее состояние объекта (имя, ID, баланс) в текстовый файл в режиме дозаписи.
     /// @param filename Имя файла для записи (например, "users.txt").
     /// @throw std::ios_base::failure если файл не удалось открыть для записи.

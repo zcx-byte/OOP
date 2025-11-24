@@ -48,11 +48,6 @@ std::string BankUserClass::get_bankID(const std::string& bank_ID) const {
     return this->bank_ID;
 }
 
-BankUserClass::BankUserClass(const BankUserClass& other)
-    : name(other.name), bank_ID(other.bank_ID), balance(other.balance) {
-        std::cout << "Создана копия пользователя: " << name << std::endl;
-}
-
 /// @brief Пополняет счёт пользователя на указанную сумму.
 /// @param amount Сумма пополнения — должна быть > 0.
 /// @param bank_ID Идентификатор банка — проверяется на соответствие this->bank_ID.
