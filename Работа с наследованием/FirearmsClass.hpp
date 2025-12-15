@@ -1,25 +1,24 @@
 #ifndef FIREARMS_CLASS_HPP
+#define FIREARMS_CLASS_HPP  
 
 #include <string>
-#include <stdexcept>
 
-class FirearmsClass{
-private:
+class FirearmsClass {
+protected:
     int gun_clip;
     std::string calibre_type;
     float weight;
 
 public:
-    FirearmsClass(int gun_clip, const std::string calibre_type, float weight)
-    : gun_clip(gun_clip), calibre_type(calibre_type), weight(weight) {}
+    FirearmsClass(int gun_clip, const std::string& calibre_type, float weight);
+    virtual ~FirearmsClass() = default;
 
-    virtual ~FirearmsClass();
+    virtual void shoot() const = 0;      
+    virtual void reload() = 0;
 
-    virtual void shoot() const = 0;
-
-    virtual void reload();
-
-    virtual int getGunClip() const;
+    int getGunClip() const;             
+    std::string getCalibreType() const { return calibre_type; }
+    float getWeight() const { return weight; }
 };
 
 class PistolClass : public FirearmsClass {
@@ -27,11 +26,14 @@ private:
     std::string model;
 
 public:
-    PistolClass(int gun_clip, const std::string calibre_type, float weight)
-    : FirearmsClass(gun_clip, calibre_type, weight), model(model) {}
+    
+    PistolClass(int gun_clip, const std::string& calibre_type, float weight, const std::string& model);
 
-    std::string showModel();
+    void shoot() const override;
+    void reload() override;
 
+    // const, т.к. не меняет объект
+    std::string showModel() const;
 };
 
 class RifleClass : public FirearmsClass {
@@ -39,9 +41,12 @@ private:
     bool hasScope;
 
 public:
-    RifleClass(int gun_clip, const std::string calibre_type, float weight)
-    : FirearmsClass(gun_clip, calibre_type, weight), hasScope(hasScope){}
+    
+    RifleClass(int gun_clip, const std::string& calibre_type, float weight, bool hasScope = false);
 
+    void shoot() const override;
+    void reload() override;
     void toggleScope();
 };
-#endif
+
+#endif // FIREARMS_CLASS_HPP
