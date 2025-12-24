@@ -26,9 +26,11 @@ public:
     virtual ~FirearmsClass() = default;
 
     /// @brief Произвести выстрел.
+    // чистый виртуальный метод? тоже самое, что и абстрактный, у которого нет реализации (=0)
     virtual void shoot() = 0;
 
     /// @brief Перезарядить оружие.
+    // чистый виртуальный метод, у которого нет реализации (=0)
     virtual void reload() = 0;
 
     /// @brief Получить текущее количество патронов.
@@ -52,10 +54,10 @@ public:
  * @brief Класс пистолета.
  */
 class PistolClass : public FirearmsClass {
-private:
+public:
+
     bool automatic;
 
-public:
     /**
      * @brief Конструктор.
      * @param gun_clip Количество патронов.
@@ -71,6 +73,8 @@ public:
 
     /// @brief Переключить режим стрельбы.
     void setAutomaticMode();
+
+    bool PistolClass::checkAutomaticMode() const;
 };
 
 /**

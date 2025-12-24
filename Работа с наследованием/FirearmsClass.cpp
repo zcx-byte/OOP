@@ -3,11 +3,21 @@
 
 // --- FirearmsClass ---
 
+// ! защитить weight 
+
 /**
  * @brief Конструктор базового класса FirearmsClass.
  */
 FirearmsClass::FirearmsClass(int gun_clip, const std::string& calibre_type, float weight, const std::string& model)
-    : gun_clip(gun_clip), calibre_type(calibre_type), weight(weight), model(model) {}
+    : gun_clip(gun_clip), calibre_type(calibre_type), weight(weight), model(model) {
+        if (weight < 0) {
+            throw std::invalid_argument("Вес не может быть отрицательным.");
+        }
+
+        if (weight < 0) {
+            throw std::invalid_argument("Вес не может быть отрицательным.");
+        }
+    }
 
 /**
  * @brief Возвращает текущее количество патронов в магазине.
@@ -45,11 +55,20 @@ void PistolClass::reload() {
 }
 
 /**
- * @brief Переключение режима стрельбы (полуавтомат ↔ автомат).
+ * @brief Проверить текущий режим стрельбы.
+ * @return true, если режим автоматический, иначе false.
+ */
+bool PistolClass::checkAutomaticMode() const {
+    return automatic;
+}
+
+/**
+ * @brief Переключение режима стрельбы (полуавтомат/автомат).
  */
 void PistolClass::setAutomaticMode() {
     automatic = !automatic;
     std::cout << "Пистолет " << model 
+                // Тернарный оператор (?:). Если true - вернёт 1 значение, если false - 2 значение
               << (automatic ? " переведён на автоматический огонь." : " переведён на полуавтоматический огонь.")
               << std::endl;
 }
