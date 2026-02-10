@@ -3,5 +3,5 @@
 *.txt
 *.drawio
 *.idea
-*.imi
+*.iml
 out/
