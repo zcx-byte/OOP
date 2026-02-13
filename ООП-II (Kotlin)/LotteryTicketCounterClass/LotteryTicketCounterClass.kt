@@ -59,7 +59,7 @@ class LotteryTicketCounterClass(
 
     fun loadTicketsFromFile(filename: String){
         // создаём переменную для хранения файла
-        // говорим, что у этой переменной тип данных файл
+        // говорим, что у этой переменной тип данных File
         // можно записать и по другому:
         // val file: File = File(filename)
         val file = File(filename)

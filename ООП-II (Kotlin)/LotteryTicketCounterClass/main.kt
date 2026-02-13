@@ -32,7 +32,4 @@ fun main(){
     println(t2)
     println()
 
-    println()
-
-
 }
