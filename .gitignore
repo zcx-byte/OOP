@@ -1,6 +1,5 @@
 *.exe
 .vscode/
-*.txt
 *.drawio
 .idea/
 *.iml

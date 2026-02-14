@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="640.0" prefWidth="514.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zabguzxcoop.lotteryticketcounterapp.MainWindowController">
+   <children>
+       <Button fx:id="addTickets" layoutX="28.0" layoutY="147.0" onAction="#onaddTicketsButtonClick" text="Добавить билеты" />
+      <Button fx:id="TakeRandTicket" layoutX="27.0" layoutY="254.0" mnemonicParsing="false" onAction="#onTakeRandTicketButtonClick" text="Выдать случайный билет" />
+      <Button fx:id="wiewRandTickets" layoutX="25.0" layoutY="287.0" mnemonicParsing="false" onAction="#onwiewRandTicketsButtonClick" text="Показать 10 выйгрышных билетов" />
+      <Button fx:id="LoadFromFile" layoutX="28.0" layoutY="183.0" mnemonicParsing="false" onAction="#onLoadFromFileButtonClick" text="Загрузить билеты из файла" />
+      <Button fx:id="LoadToFile" layoutX="27.0" layoutY="217.0" mnemonicParsing="false" onAction="#onLoadToFileButtonClick" prefHeight="26.0" prefWidth="166.0" text="Сохранить билеты в файл" />
+      <TextField fx:id="lottaryName" layoutX="25.0" layoutY="24.0" prefHeight="26.0" prefWidth="417.0" promptText="Название лотереи" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="71.39999999999998" />
+      <TextArea fx:id="statusArea" layoutX="11.0" layoutY="339.0" prefHeight="71.0" prefWidth="492.0" AnchorPane.bottomAnchor="229.8" />
+      <TextField fx:id="ticketcirculation" layoutX="25.0" layoutY="61.0" prefHeight="26.0" prefWidth="418.0" promptText="Номер тиража" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="71.39999999999998" />
+      <TextField fx:id="availableTicket" layoutX="25.0" layoutY="100.0" prefHeight="26.0" prefWidth="418.0" promptText="Колличество билетов" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="71.39999999999998" />
+      <TextArea fx:id="resultArea" layoutX="11.0" layoutY="430.0" prefHeight="175.0" prefWidth="492.0" AnchorPane.bottomAnchor="34.80000000000001" />
+   </children>
+</AnchorPane>
