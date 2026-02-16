@@ -1,4 +1,4 @@
-fun main(){
+fun main() {
     val t1 = LotteryTicketCounterClass("Easy Money", "1dEmon", 100)
 
     t1.addTickets(10_000)
@@ -47,5 +47,5 @@ fun main(){
     println("-----------------------------------------------------")
 
     println(t2)
-    LotteryTicketCounterClass.saveAllToFile(t2,"save.txt")
+    LotteryTicketCounterClass.saveAllToFile(t2, "save.txt")
 }

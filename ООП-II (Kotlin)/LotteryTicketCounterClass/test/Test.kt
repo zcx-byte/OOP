@@ -1,88 +1,107 @@
 import java.io.File
 
 fun main() {
-    try {
-        testConstructor()
-        testAddTickets()
-        testSellTickets()
-        testChangeLotteryName()
-        testToString()
-        testSaveToFile()
-        testLoadTicketsFromFile()
-        testSaveAllToFile()
+    // Запуск всех тестов для проверки корректности работы класса LotteryTicketCounterClass
+    testConstructor()
+    testAddTickets()
+    testSellTickets()
+    testChangeLotteryName()
+    testToString()
+    testSaveToFile()
+    testLoadTicketsFromFile()
+    testSaveAllToFile()
 
-        println("Все тесты пройдены")
-    } finally {
-        // Очистка (опционально — можно закомментировать, если хотите видеть результат)
-//        File("testresources/saveTest.txt").delete()
-    }
+    println("Все тесты пройдены успешно!")
 }
 
 // --- Тесты ---
 
 fun testConstructor() {
-    val obj = LotteryTicketCounterClass("A", "X", 10)
-    if (obj.getavailableTicket() != 10) error("Конструктор: неверное значение")
 
+    // Проверяем корректную работу конструктора с валидными данными
+    val obj = LotteryTicketCounterClass("A", "X", 10)
+    check(obj.getavailableTickets() == 10) { "Конструктор: неверное значение количества билетов" }
+
+    // Проверяем, что конструктор выбрасывает исключение при отрицательном количестве билетов
+    var exceptionThrown = false
     try {
         LotteryTicketCounterClass("A", "X", -1)
-        error("Должно быть исключение для отрицательного количества")
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        exceptionThrown = true
+    }
+    check(exceptionThrown) { "Должно быть исключение для отрицательного количества билетов" }
 }
 
 fun testAddTickets() {
+    // Проверяем добавление билетов: начальное количество 10 + 5 = 15
     val obj = LotteryTicketCounterClass("A", "X", 10)
     obj.addTickets(5)
-    if (obj.getavailableTicket() != 15) error("addTickets: неверное увеличение")
+    check(obj.getavailableTickets() == 15) { "addTickets: неверное увеличение количества" }
 
+    // Проверяем, что метод addTickets выбрасывает исключение при отрицательном amount
+    var exceptionThrown = false
     try {
         obj.addTickets(-1)
-        error("Должно быть исключение для отрицательного amount")
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        exceptionThrown = true
+    }
+    check(exceptionThrown) { "Должно быть исключение для отрицательного amount" }
 }
 
 fun testSellTickets() {
+    // Проверяем продажу билетов: начальное количество 10 - 3 = 7
     val obj = LotteryTicketCounterClass("A", "X", 10)
     obj.sellTickets(3)
-    if (obj.getavailableTicket() != 7) error("sellTickets: неверное уменьшение")
+    check(obj.getavailableTickets() == 7) { "sellTickets: неверное уменьшение количества" }
 
+    // Проверяем, что нельзя продать больше билетов, чем доступно
+    var exceptionThrown = false
     try {
-        obj.sellTickets(11)
-        error("Должно быть исключение при превышении доступного")
-    } catch (e: IllegalArgumentException) {}
+        obj.sellTickets(11) // Пытаемся продать 11 при наличии 10
+    } catch (e: IllegalArgumentException) {
+        exceptionThrown = true
+    }
+    check(exceptionThrown) { "Должно быть исключение при превышении доступного количества" }
 }
 
 fun testChangeLotteryName() {
+    // Проверяем изменение имени лотереи
     val obj = LotteryTicketCounterClass("Old", "X", 10)
     obj.changeLotteryName("New")
-    if (obj.getLotteryName() != "New") error("changeLotteryName: имя не изменилось")
+    check(obj.getLotteryName() == "New") { "changeLotteryName: имя не изменилось" }
 
+    // Проверяем, что нельзя установить пустое имя лотереи
+    var exceptionThrown = false
     try {
         obj.changeLotteryName(" ")
-        error("Должно быть исключение для пустого имени")
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        exceptionThrown = true
+    }
+    check(exceptionThrown) { "Должно быть исключение для пустого имени" }
 }
 
 fun testToString() {
+    // Проверяем форматирование строкового представления объекта
     val obj = LotteryTicketCounterClass("T", "ID", 5)
     val expected = "Лотерея: T, Тираж: ID, Доступно билетов: 5"
-    if (obj.toString() != expected) error("toString: неверный формат")
+    check(obj.toString() == expected) { "toString: неверный формат строки" }
 }
 
 fun testSaveToFile() {
+    // Проверяем сохранение данных одного объекта в файл
     val filename = "saveTest.txt"
-    File(filename).delete()
+    File(filename).delete() // Очищаем файл перед тестом
 
     val obj = LotteryTicketCounterClass("S", "SAVE", 99)
     obj.saveToFile(filename)
 
     val content = File(filename).readText().trim()
     val expected = "S SAVE 99"
-    if (content != expected) error("saveToFile: ожидалось '$expected', получено '$content'")
+    check(content == expected) { "saveToFile: ожидалось '$expected', получено '$content'" }
 }
 
 fun testLoadTicketsFromFile() {
-    // Гарантируем, что файл существует с правильным содержимым
+    // Создаем тестовый файл с данными для загрузки
     val filename = "TestTickets.txt"
     File(filename).writeText(
         """Быстроденежки id50demons 150
@@ -91,24 +110,24 @@ fun testLoadTicketsFromFile() {
 СуперЛото SUPER-99 75""".trimIndent()
     )
 
+    // Загружаем список объектов из файла
     val list = LotteryTicketCounterClass.loadTicketsFromFile(filename)
-    if (list.size != 4) error("Ожидалось 4 объекта")
+    check(list.size == 4) { "Ожидалось 4 объекта, загружено: ${list.size}" }
 
-    if (list[0].getLotteryName() != "Быстроденежки" ||
-        list[0].getticketcirculation() != "id50demons" ||
-        list[0].getavailableTicket() != 150) {
-        error("Первый объект неверен")
-    }
+    // Проверяем первый объект из файла
+    check(list[0].getLotteryName() == "Быстроденежки" &&
+            list[0].getticketcirculation() == "id50demons" &&
+            list[0].getavailableTickets() == 150) { "Первый объект неверен" }
 
-    if (list[3].getLotteryName() != "СуперЛото" ||
-        list[3].getavailableTicket() != 75) {
-        error("Последний объект неверен")
-    }
+    // Проверяем последний объект из файла
+    check(list[3].getLotteryName() == "СуперЛото" &&
+            list[3].getavailableTickets() == 75) { "Последний объект неверен" }
 }
 
 fun testSaveAllToFile() {
+    // Проверяем сохранение списка объектов в файл
     val filename = "saveTest.txt"
-    File(filename).delete()
+    File(filename).delete() // Очищаем файл перед тестом
 
     val list = listOf(
         LotteryTicketCounterClass("A", "1", 1),
@@ -118,5 +137,5 @@ fun testSaveAllToFile() {
 
     val content = File(filename).readText().trim()
     val expected = "A 1 1\nB 2 2"
-    if (content != expected) error("saveAllToFile: ожидалось '$expected', получено '$content'")
+    check(content == expected) { "saveAllToFile: ожидалось '$expected', получено '$content'" }
 }

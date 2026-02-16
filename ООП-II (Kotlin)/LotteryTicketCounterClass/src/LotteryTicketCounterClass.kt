@@ -9,10 +9,11 @@ import java.io.File     // подключаем библиотеку для ра
 class LotteryTicketCounterClass(
     private var lotteryName: String = " ",
     private var ticketcirculation: String = " ",
-    private var availableTicket: Int = 0,
+    availableTicket: Int = 0,
 ) {
     // блок init выполняется при создании объекта и используется для проверки данных
     // Этот блок выполняется сразу при создании объекта — здесь гарантируется, что объект создастся с корректными данными
+    // добавить про объявление параметра от поле в кострукторе класса
     init {
         // require проверяет условие; если оно ложно — выбрасывает IllegalArgumentException с указанным сообщением
         require(availableTicket >= 0) { "Кол-во билетов не может быть отрицательным" }
@@ -22,7 +23,7 @@ class LotteryTicketCounterClass(
 
     fun getLotteryName(): String = lotteryName
     fun getticketcirculation(): String = ticketcirculation
-    fun getavailableTicket(): Int = available
+    fun getavailableTickets(): Int = available
 
     /**
      * Пополняет количество доступных билетов.
@@ -108,7 +109,7 @@ class LotteryTicketCounterClass(
          */
         fun saveAllToFile(tickets: List<LotteryTicketCounterClass>, filename: String) {
             val lines = tickets.map { ticket ->
-                "${ticket.getLotteryName()} ${ticket.getticketcirculation()} ${ticket.getavailableTicket()}"
+                "${ticket.getLotteryName()} ${ticket.getticketcirculation()} ${ticket.getavailableTickets()}"
             }
             // appendText() - Открывает файл в режиме дозаписи, добавляет переданную строку в конец файла,
             // затем закрывает файл.
@@ -124,7 +125,7 @@ class LotteryTicketCounterClass(
      * Внимание: каждый вызов перезаписывает файл. Для сохранения списка объектов используйте статический метод.
      */
     fun saveToFile(filename: String) {
-        val line = "${getLotteryName()} ${getticketcirculation()} ${getavailableTicket()}"
+        val line = "${getLotteryName()} ${getticketcirculation()} ${getavailableTickets()}"
         File(filename).appendText(line + "\n")
     }
 }
