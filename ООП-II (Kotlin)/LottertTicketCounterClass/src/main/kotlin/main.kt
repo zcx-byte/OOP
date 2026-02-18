@@ -48,4 +48,5 @@ fun main() {
 
     println(t2)
     LotteryTicketCounterClass.saveAllToFile(t2, "save.txt")
+
 }

@@ -112,6 +112,7 @@ class LotteryTicketCounterClass(
             val lines = tickets.map { ticket ->
                 "${ticket.getLotteryName()} ${ticket.getticketcirculation()} ${ticket.getavailableTickets()}"
             }
+
             // appendText() - Открывает файл в режиме дозаписи, добавляет переданную строку в конец файла,
             // затем закрывает файл.
             // lines.joinToString("\n") — объединяет все строки из списка в одну, разделяя их символом новой строки

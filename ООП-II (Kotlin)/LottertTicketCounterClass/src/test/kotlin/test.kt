@@ -3,42 +3,38 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
 // подключаем библиотеки для работы с файлами
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
 /**
  * Класс для тестирования функциональности LotteryTicketCounterClass.
  *
- * @property tempFile Путь к временному файлу, который создаётся для каждого теста.
- *
  * Этот класс содержит набор тестов, которые проверяют:
  * - Корректность создания объектов
  * - Работу методов добавления и продажи билетов
  * - Работу с файлами (сохранение и загрузка)
  * - Обработку ошибочных данных
- *
- * @TestInstance(TestInstance.Lifecycle.PER_CLASS) — указывает, что для всех тестов
- * создаётся ОДИН экземпляр этого класса (а не новый для каждого теста).
- * Это позволяет использовать переменные класса между тестами.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class LotteryTicketCounterClassTest {
+class LotteryTicketTest {
 
     // переменная для хранения пути к временному файлу
     // используется во всех тестах, связанных с файлами
-    private var tempFile: Path? = null
+    //
+    // lateinit var — модификатор, который означает "инициализировано позже".
+    // - Мы обещаем компилятору, что переменная будет заполнена до первого использования.
+    // - Тип Path означает, что переменная НЕ может быть null.
+    // - Это избавляет от необходимости проверять null и использовать операторы !! или ?.
+    private lateinit var tempFile: Path
 
     /**
-     * Метод выполняется перед кажым тестом.
+     * Метод выполняется перед каждым тестом.
      *
      * @BeforeEach — аннотация, которая говорит JUnit: "Запусти этот метод
      * перед каждым тестом, независимо от того, какой именно тест будет выполняться".
      *
-     * Зачем:
      * - Создать чистый временный файл для теста
      * - Гарантировать, что каждый тест начинает работу с новыми данными
-     * - Избежать конфликтов между тестами (один тест не испортит данные другому)
+     * - Избежать конфликтов между тестами
      */
     @BeforeEach
     fun setUp() {
@@ -46,6 +42,7 @@ class LotteryTicketCounterClassTest {
         // Files.createTempFile() создаёт уникальный временный файл в системной папке
         // "lottery_test_" — префикс имени файла
         // ".txt" — расширение файла
+        // Результат сразу записывается в переменную tempFile (благодаря lateinit)
         tempFile = Files.createTempFile("lottery_test_", ".txt")
     }
 
@@ -55,16 +52,17 @@ class LotteryTicketCounterClassTest {
      * @AfterEach — аннотация, которая говорит JUnit: "Запусти этот метод
      * после каждого завершённого теста".
      *
-     * Зачем это нужно:
      * - Удалить временный файл после теста
      * - Очистить память и диск от мусора
      * - Гарантировать, что файлы не накопятся на компьютере после запуска тестов
      */
     @AfterEach
     fun tearDown() {
-        // let — безопасный вызов: если tempFile не null, выполняем блок
+
         // Files.deleteIfExists() — удаляет файл, если он существует
-        tempFile?.let { Files.deleteIfExists(it) }
+        // Так как tempFile имеет тип Path (не null), мы можем передать её напрямую
+        // без проверок на null и без операторов безопасности
+        Files.deleteIfExists(tempFile)
     }
 
     /**
@@ -79,6 +77,7 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test constructor with valid data`() {
+
         // создаём объект лотерейного билета с валидными данными
         val ticket = LotteryTicketCounterClass("Sportloto", "12345", 100)
 
@@ -102,8 +101,10 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test constructor with negative tickets throws exception`() {
+
         // assertThrows ловит исключение и возвращает его в переменную exception
         val exception = assertThrows<IllegalArgumentException> {
+
             // этот код должен вызвать ошибку
             LotteryTicketCounterClass("Sportloto", "12345", -10)
         }
@@ -122,6 +123,7 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test addTickets increases count`() {
+
         // создаём объект с 50 билетами
         val ticket = LotteryTicketCounterClass("Loto", "001", 50)
 
@@ -144,6 +146,7 @@ class LotteryTicketCounterClassTest {
         val ticket = LotteryTicketCounterClass("Loto", "001", 50)
 
         val exception = assertThrows<IllegalArgumentException> {
+
             // пытаемся добавить -5 билетов (некорректно)
             ticket.addTickets(-5)
         }
@@ -181,6 +184,7 @@ class LotteryTicketCounterClassTest {
         val ticket = LotteryTicketCounterClass("Loto", "001", 10)
 
         val exception = assertThrows<IllegalArgumentException> {
+
             // пытаемся продать 15 билетов, а есть только 10
             ticket.sellTickets(15)
         }
@@ -218,6 +222,7 @@ class LotteryTicketCounterClassTest {
         val ticket = LotteryTicketCounterClass("OldName", "001", 10)
 
         val exception = assertThrows<IllegalArgumentException> {
+
             // пытаемся установить название из пробела (некорректно)
             ticket.changeLotteryName(" ")
         }
@@ -254,8 +259,10 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test saveAllToFile and loadTicketsFromFile`() {
-        // получаем путь к временному файлу (создан в @BeforeEach)
-        val fileName = tempFile!!.toString()
+
+        // получаем путь к временному файлу
+        // благодаря аннотации @BeforeEach и модификатору lateinit
+        val fileName = tempFile.toString()
 
         // 1. Создаём исходный список билетов
         val originalList = listOf(
@@ -293,6 +300,7 @@ class LotteryTicketCounterClassTest {
     @Test
     fun `test loadTicketsFromFile with non-existent file throws exception`() {
         val exception = assertThrows<IllegalStateException> {
+
             // пытаемся загрузить файл, которого нет
             LotteryTicketCounterClass.loadTicketsFromFile("non_existent_file.txt")
         }
@@ -316,13 +324,16 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test loadTicketsFromFile with invalid format throws exception`() {
-        val fileName = tempFile!!.toString()
+
+        // получаем путь к файлу (безопасно, так как файл создан в setUp)
+        val fileName = tempFile.toString()
 
         // записываем в файл неверный формат (всего 2 слова вместо 3)
         // формат должен быть: "Название Тираж Количество"
-        File(fileName).writeText("LotoName OnlyTwoWords")
+        java.io.File(fileName).writeText("LotoName OnlyTwoWords")
 
         val exception = assertThrows<IllegalArgumentException> {
+
             // пытаемся загрузить некорректные данные
             LotteryTicketCounterClass.loadTicketsFromFile(fileName)
         }
@@ -345,7 +356,9 @@ class LotteryTicketCounterClassTest {
      */
     @Test
     fun `test instance saveToFile`() {
-        val fileName = tempFile!!.toString()
+        
+        // получаем путь к файлу
+        val fileName = tempFile.toString()
 
         // создаём объект билета
         val ticket = LotteryTicketCounterClass("InstanceLoto", "I1", 5)
@@ -354,7 +367,7 @@ class LotteryTicketCounterClassTest {
         ticket.saveToFile(fileName)
 
         // получаем объект файла для проверки
-        val file = File(fileName)
+        val file = java.io.File(fileName)
 
         // проверяем, что файл физически существует на диске
         assertTrue(file.exists())
