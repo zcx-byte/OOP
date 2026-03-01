@@ -12,17 +12,21 @@ class LotteryTicketCounterClass(
     private var ticketcirculation: String = " ",
     availableTicket: Int = 0,
 ) {
+
     // блок init выполняется при создании объекта и используется для проверки данных
     // Этот блок выполняется сразу при создании объекта — здесь гарантируется, что объект создастся с корректными данными
-    // добавить про объявление параметра от поле в кострукторе класса
+    // Параметр: виден только при создании (в constructor/init)
+    // если есть private var или прост
+    // Свойство (val): сохраняется в объекте, доступно во всём классе
     init {
+
         // require проверяет условие; если оно ложно — выбрасывает IllegalArgumentException с указанным сообщением
         require(availableTicket >= 0) { "Кол-во билетов не может быть отрицательным" }
     }
 
     private var available: Int = availableTicket
 
-    fun getLotteryName(): String = lotteryName
+    fun getLotteryName(): String =  lotteryName
     fun getticketcirculation(): String = ticketcirculation
     fun getavailableTickets(): Int = available
 
@@ -69,6 +73,7 @@ class LotteryTicketCounterClass(
      * Каждая строка превращается в один объект.
      */
     companion object {
+
         /**
          * Загружает лотереи из файла и создает список объектов.
          *

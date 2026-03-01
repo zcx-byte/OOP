@@ -18,16 +18,20 @@ class MainWindowController {
     @FXML private lateinit var statusArea: TextArea
     @FXML private lateinit var resultArea: TextArea
 
-    // Список всех лотерей, созданных пользователем
-    // Тип MutableList<LotteryTicketCounterClass> означает изменяемый список объектов класса
-    // Инициализация через функцию mutableListOf() создаёт пустой список
-    // Используем var вместо val, потому что ссылка на список может быть заменена (например, при очистке)
-    private var lotteries: MutableList<LotteryTicketCounterClass> = mutableListOf()
+    // Единственная ссылка (класс - ссылочный тип) лотереи, с которым работает приложение
+    // currentLottery - сслыка на объект типа LotteryTicketCounterClass
+    // Тип LotteryTicketCounterClass? означает, что переменная может хранить ссылку на объект или null
+    // Изначально присваиваем null, так как лотерея ещё не создана пользователем
+    // Используем var, потому что ссылка будет изменяться: сначала null, затем созданный объект, возможно — новый при перезагрузке
+    private var currentLottery: LotteryTicketCounterClass? = null
 
     /**
      * Метод вызывается при нажатии кнопки "Добавить билеты".
      * Связь с кнопкой в FXML осуществляется через атрибут onAction="#onaddTicketsButtonClick".
      * Аннотация @FXML обязательна для методов, вызываемых из FXML.
+     *
+     * Логика метода изменена: теперь он либо создаёт единственный объект лотереи,
+     * либо обновляет параметры уже существующего объекта.
      */
     @FXML
     private fun onaddTicketsButtonClick() {
@@ -54,19 +58,28 @@ class MainWindowController {
             return
         }
 
-        // Создание объекта класса с использованием конструктора
-        // Параметры передаются в том же порядке, как объявлены в конструкторе класса LotteryTicketCounterClass
-        val lottery = LotteryTicketCounterClass(name, circulation, count)
-        lotteries.add(lottery)
+        // Логика работы с единственным объектом:
+        // Если объект ещё не создан — создаём его, иначе — обновляем существующий
+        if (currentLottery == null) {
+            // Создание объекта класса с использованием конструктора
+            // Параметры передаются в том же порядке, как объявлены в конструкторе класса LotteryTicketCounterClass
+            currentLottery = LotteryTicketCounterClass(name, circulation, count)
+            statusArea.text = "Создана новая лотерея: $name (тираж $circulation), билетов: $count"
+        } else {
+            // Обновление параметров существующего объекта через методы-сеттеры
+            // Для корректной работы в классе LotteryTicketCounterClass должны быть реализованы соответствующие методы
+            currentLottery?.setLotteryName(name)
+            currentLottery?.setTicketСirculation(circulation)
+            currentLottery?.setTickets(count) // Метод для установки нового количества билетов
+
+            statusArea.text = "Летерея создана: $name (тираж $circulation), билетов: $count"
+        }
 
         // Формирование строки с использованием строкового шаблона (string template)
         // Синтаксис $имяПеременной или ${выражение} позволяет встраивать значения прямо в строку
         // Это альтернатива конкатенации через оператор + и более читаема
-        statusArea.text = "Добавлена лотерея: $name (тираж $circulation), билетов: $count"
-
-        // Метод appendText() добавляет текст в конец существующего содержимого поля
-        // В отличие от присваивания свойству text, не очищает предыдущее содержимое
-        resultArea.appendText("Добавлена лотерея: ${lottery.toString()}\n")
+        // Используем безопасный вызов ?.toString(), так как currentLottery может быть null
+        resultArea.appendText("${currentLottery?.toString()}\n")
 
         // Очистка полей ввода через метод clear()
         lottaryName.clear()
@@ -79,75 +92,68 @@ class MainWindowController {
 
     /**
      * Метод вызывается при нажатии кнопки "Выдать случайный билет".
-     * Выбирает случайную лотерею с доступными билетами и генерирует случайный номер билета.
-     * После выдачи билета количество доступных билетов уменьшается на 1 через метод sellTickets().
+     * Работает с единственным объектом лотереи: генерирует случайный номер билета
+     * и уменьшает количество доступных билетов через метод sellTickets().
      */
     @FXML
     private fun onTakeRandTicketButtonClick() {
 
-        // Проверка наличия лотерей в списке через свойство isEmpty()
-        // Альтернатива: if (lotteries.size == 0)
-        if (lotteries.isEmpty()) {
-            statusArea.text = "Ошибка: нет добавленных лотерей"
+        // Проверка, создан ли объект лотереи
+        // Используем safe call (?) для безопасного обращения к nullable-переменной
+        val lottery = currentLottery
+
+        if (lottery == null) {
+            statusArea.text = "Ошибка: лотерея не создана"
             return
         }
 
-        // Фильтрация списка через функцию высшего порядка filter()
-        // Лямбда-выражение { условие } применяется к каждому элементу списка
-        // Результат — новый список, содержащий только элементы, удовлетворяющие условию
-        // В данном случае отбираем только лотереи с доступными билетами (больше 0)
-        // it — автоматически означает текущий объект на каждой итерации в filter
-        val availableLotteries = lotteries.filter { it.getavailableTicket() > 0 }
-
-        if (availableLotteries.isEmpty()) {
+        // Проверка наличия доступных билетов через геттер
+        // Если билетов нет — выводим сообщение и прерываем выполнение
+        if (lottery.getAvailableTicket() <= 0) {
             statusArea.text = "Ошибка: все билеты уже выданы"
             return
         }
-
-        // Выбор случайного элемента из списка через расширение random()
-        // Это встроенный метод Kotlin для коллекций, не требует ручной генерации индекса
-        // Аналог ручного кода: availableLotteries[Random.nextInt(availableLotteries.size)]
-        val selectedLottery = availableLotteries.random()
 
         // Генерация случайного целого числа в диапазоне [от, до)
         // Конструктор Random.nextInt(от, до) возвращает число от "от" включительно до "до" исключительно
         // Поэтому для включения верхней границы добавляем 1 к количеству билетов
         // Например, если билетов 10, то диапазон будет [1, 11), что даёт числа от 1 до 10 включительно
-        val ticketNumber = Random.nextInt(1, selectedLottery.getavailableTicket() + 1)
+        val ticketNumber = Random.nextInt(1, lottery.getAvailableTicket() + 1)
 
         // Вызов метода класса для уменьшения счётчика доступных билетов
         // Метод sellTickets() реализован в классе и содержит внутреннюю валидацию
         // После вызова количество доступных билетов уменьшится на 1
-        selectedLottery.sellTickets(1)
+        // Важно: мы изменяем состояние того же самого объекта, ссылка на который хранится в currentLottery
+        lottery.sellTickets(1)
 
         // Формирование статусного сообщения с использованием строковых шаблонов
-        statusArea.text = "Выдан билет №$ticketNumber из лотереи '${selectedLottery.getLotteryName()}' " +
-                "(тираж ${selectedLottery.getticketcirculation()})"
+        statusArea.text = "Выдан билет №$ticketNumber из лотереи '${lottery.getLotteryName()}' " +
+                "(тираж ${lottery.getTicketcirculation()})"
 
         // Добавление записи в историю операций с указанием всех параметров билета
-        resultArea.appendText("Выдан билет: Лотерея='${selectedLottery.getLotteryName()}', " +
-                "Тираж=${selectedLottery.getticketcirculation()}, Билет №$ticketNumber\n")
+        resultArea.appendText("Выдан билет: Лотерея='${lottery.getLotteryName()}', " +
+                "Тираж=${lottery.getTicketcirculation()}, Билет №$ticketNumber\n")
     }
 
     /**
      * Метод вызывается при нажатии кнопки "Показать 10 выйгрышных билетов".
-     * Генерирует 10 случайных билетов из всех доступных лотерей.
-     * Каждый билет генерируется независимо, дубликаты возможны.
+     * Генерирует 10 случайных номеров билетов из единственной лотереи.
+     * Каждый номер генерируется независимо, дубликаты возможны.
+     * Количество билетов не уменьшается — метод только отображает информацию.
      */
     @FXML
     private fun onwiewRandTicketsButtonClick() {
 
-        // Проверка наличия лотерей в системе
-        if (lotteries.isEmpty()) {
-            statusArea.text = "Ошибка: нет добавленных лотерей"
+        // Проверка, создан ли объект лотереи
+        val lottery = currentLottery
+
+        if (lottery == null) {
+            statusArea.text = "Ошибка: лотерея не создана"
             return
         }
 
-        // Фильтрация списка — оставляем только лотереи с доступными билетами
-        val availableLotteries = lotteries.filter { it.getavailableTicket() > 0 }
-
-        // Проверка, есть ли лотереи с билетами для генерации
-        if (availableLotteries.isEmpty()) {
+        // Проверка наличия доступных билетов для генерации
+        if (lottery.getAvailableTicket() <= 0) {
             statusArea.text = "Ошибка: все билеты уже выданы"
             return
         }
@@ -160,16 +166,14 @@ class MainWindowController {
         // Индекс index начинается с 0 и увеличивается на каждой итерации
         // Это более читаемая альтернатива циклу for (i in 0 until 10)
         repeat(10) { index ->
-            // Случайный выбор лотереи из доступных
-            val lottery = availableLotteries.random()
-
             // Генерация случайного номера билета в пределах доступного количества
-            val ticketNumber = Random.nextInt(1, lottery.getavailableTicket() + 1)
+            // Поскольку лотерея одна, не требуется выбор случайного элемента из списка
+            val ticketNumber = Random.nextInt(1, lottery.getAvailableTicket() + 1)
 
             // Формирование строки с информацией о билете
             // Используем index + 1, потому что индексация в repeat начинается с 0
             // Формат: "1. Лотерея='...', Тираж=..., Билет №..."
-            val ticketInfo = "${index + 1}. Лотерея='${lottery.getLotteryName()}', Тираж=${lottery.getticketcirculation()}, Билет №$ticketNumber"
+            val ticketInfo = "${index + 1}. Лотерея='${lottery.getLotteryName()}', Тираж=${lottery.getTicketcirculation()}, Билет №$ticketNumber"
 
             // Добавление информации о билете в историю операций
             resultArea.appendText("$ticketInfo\n")
@@ -183,37 +187,39 @@ class MainWindowController {
      * Метод вызывается при нажатии кнопки "Загрузить билеты из файла".
      * Использует статический метод loadTicketsFromFile() вашего класса.
      * Статические методы в Kotlin реализуются через companion object.
+     *
+     * Логика изменена: из файла загружается один объект, который заменяет currentLottery.
      */
     @FXML
     private fun onLoadFromFileButtonClick() {
         try {
+
             // Вызов статического метода через имя класса
             // Метод возвращает список объектов LotteryTicketCounterClass
-            // Файл "данные.txt" должен находиться в рабочей директории проекта
+            // Файл "Tickets.txt" должен находиться в рабочей директории проекта
             val loaded = LotteryTicketCounterClass.loadTicketsFromFile("Tickets.txt")
 
-            // Очистка текущего списка лотерей через метод clear()
-            // Это удаляет все элементы из списка, но сохраняет сам объект списка
-            lotteries.clear()
+            // Проверка, что файл не пустой и содержит хотя бы одну запись
+            if (loaded.isEmpty()) {
+                statusArea.text = "Предупреждение: файл пуст или не содержит корректных данных"
+                return
+            }
 
-            // Добавление всех элементов из одного списка в другой через метод addAll()
-            // Альтернатива: for (item in loaded) lotteries.add(item)
-            lotteries.addAll(loaded)
+            // Присваиваем первый элемент из загруженного списка как текущую лотерею
+            // Остальные элементы (если они есть) игнорируются, так как приложение работает с одним объектом
+            // firstOrNull() возвращает первый элемент или null, если список пуст
+            currentLottery = loaded.firstOrNull()
 
             // Формирование статусного сообщения с использованием строкового шаблона
-            // Свойство size возвращает количество элементов в списке
-            statusArea.text = "Загружено ${loaded.size} лотерей из файла 'Tickets.txt'"
+            statusArea.text = "Загружена лотерея из файла 'Tickets.txt': ${currentLottery?.getLotteryName()}"
 
             // Добавление заголовка в историю операций
-            resultArea.appendText("\nЗагружены лотереи из файла:\n")
+            resultArea.appendText("\nЗагружена лотерея из файла:\n")
 
-            // Итерация по списку через цикл for
-            // Синтаксис for (элемент in коллекция) — идиоматичный способ перебора в Kotlin
-            // Альтернатива с функцией высшего порядка: loaded.forEach { lottery -> ... }
-            for (lottery in loaded) {
-                // Вызов метода toString() вашего класса для получения строкового представления объекта
-                resultArea.appendText("   ${lottery.toString()}\n")
-            }
+            // Вызов метода toString() вашего класса для получения строкового представления объекта
+            // Используем безопасный вызов ?.toString() на случай, если объект не загрузился
+            resultArea.appendText("   ${currentLottery?.toString()}\n")
+
         } catch (e: Exception) {
             // Оператор элвис (?:) возвращает левый операнд, если он не null, иначе правый
             // Используется для предоставления значения по умолчанию при отсутствии сообщения об ошибке
@@ -228,26 +234,31 @@ class MainWindowController {
     /**
      * Метод вызывается при нажатии кнопки "Сохранить билеты в файл".
      * Использует статический метод saveAllToFile() вашего класса.
+     *
+     * Логика изменена: в файл сохраняется единственный объект currentLottery.
      */
     @FXML
     private fun onLoadToFileButtonClick() {
         try {
             // Проверка наличия данных для сохранения
-            if (lotteries.isEmpty()) {
+            // Если объект не создан — нечего сохранять
+            val lottery = currentLottery
+            if (lottery == null) {
                 statusArea.text = "Ошибка: нет данных для сохранения"
                 return
             }
 
             // Вызов статического метода сохранения
-            // Передаём ссылку на список и имя файла
-            // Метод сохраняет все объекты из списка в текстовый файл
-            LotteryTicketCounterClass.saveAllToFile(lotteries, "save.txt")
+            // Поскольку метод ожидает список, передаём список из одного элемента
+            // Альтернатива: создать перегрузку метода saveAllToFile, принимающую один объект
+            LotteryTicketCounterClass.saveAllToFile(listOf(lottery), "save.txt")
 
             // Формирование статусного сообщения
-            statusArea.text = "Сохранено ${lotteries.size} лотерей в файл 'save.txt'"
+            statusArea.text = "Сохранена лотерея '${lottery.getLotteryName()}' в файл 'save.txt'"
 
             // Добавление записи в историю операций
-            resultArea.appendText("\nСохранено ${lotteries.size} лотерей в файл 'save.txt'\n")
+            resultArea.appendText("\nСохранена лотерея в файл 'save.txt': ${lottery.toString()}\n")
+
         } catch (e: Exception) {
             // Обработка ошибок сохранения с использованием оператора элвис
             statusArea.text = "Ошибка сохранения: ${e.message ?: "неизвестная ошибка"}"

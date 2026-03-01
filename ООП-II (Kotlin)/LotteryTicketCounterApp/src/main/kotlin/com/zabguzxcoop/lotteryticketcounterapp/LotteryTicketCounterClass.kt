@@ -11,7 +11,7 @@ import java.io.File     // подключаем библиотеку для ра
 class LotteryTicketCounterClass(
     private var lotteryName: String = " ",
     private var ticketcirculation: String = " ",
-    private var availableTicket: Int = 0,
+    availableTicket: Int = 0,
 ) {
     // блок init выполняется при создании объекта и используется для проверки данных
     // Этот блок выполняется сразу при создании объекта — здесь гарантируется, что объект создастся с корректными данными
@@ -23,8 +23,41 @@ class LotteryTicketCounterClass(
     private var available: Int = availableTicket
 
     fun getLotteryName(): String = lotteryName
-    fun getticketcirculation(): String = ticketcirculation
-    fun getavailableTicket(): Int = available
+    fun getTicketcirculation(): String = ticketcirculation
+    fun getAvailableTicket(): Int = available
+
+    // если сеттеры простые, то лучше сделать public поля
+
+    /**
+     * Метод для обновления имени лотереи.
+     * Используется при изменении данных существующей лотереи.
+     *
+     * @param newName новое имя лотереи
+     */
+    fun setLotteryName(newName: String) {
+        this.lotteryName = newName
+    }
+
+    /**
+     * Метод для обновления номера тиража.
+     * Используется при изменении данных существующей лотереи.
+     *
+     * @param newCirculation новый номер тиража
+     */
+    fun setTicketСirculation(newCirculation: String) {
+        this.ticketcirculation = newCirculation
+    }
+
+    /**
+     * Метод для сброса/установки нового количества доступных билетов.
+     * Используется при обновлении данных существующей лотереи.
+     *
+     * @param newCount новое количество билетов (должно быть >= 0)
+     */
+    fun setTickets(newCount: Int) {
+        this.available = if (newCount >= 0) newCount else 0
+    }
+
 
     /**
      * Пополняет количество доступных билетов.
@@ -55,7 +88,7 @@ class LotteryTicketCounterClass(
         println("Название лотереи изменено на: $newName")
     }
 
-    // override — заменяем стандартный метод родительского класса (Any) своей реализацией
+    // override — заменяем стандартный метод родительского класса Object своей реализацией
     override fun toString(): String {
         return "Лотерея: $lotteryName, Тираж: $ticketcirculation, Доступно билетов: $available"
     }
@@ -110,7 +143,7 @@ class LotteryTicketCounterClass(
          */
         fun saveAllToFile(tickets: List<LotteryTicketCounterClass>, filename: String) {
             val lines = tickets.map { ticket ->
-                "${ticket.getLotteryName()} ${ticket.getticketcirculation()} ${ticket.getavailableTicket()}"
+                "${ticket.getLotteryName()} ${ticket.getTicketcirculation()} ${ticket.getAvailableTicket()}"
             }
             // appendText() - Открывает файл в режиме дозаписи, добавляет переданную строку в конец файла,
             // затем закрывает файл.
@@ -126,7 +159,7 @@ class LotteryTicketCounterClass(
      * Внимание: каждый вызов перезаписывает файл. Для сохранения списка объектов используйте статический метод.
      */
     fun saveToFile(filename: String) {
-        val line = "${getLotteryName()} ${getticketcirculation()} ${getavailableTicket()}"
+        val line = "${getLotteryName()} ${getTicketcirculation()} ${getAvailableTicket()}"
         File(filename).appendText(line + "\n")
     }
 }
