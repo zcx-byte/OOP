@@ -5,6 +5,7 @@ target/
 .kotlin
 
 *.txt
+api_key.txt
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
