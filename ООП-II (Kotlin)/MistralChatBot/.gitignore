@@ -4,7 +4,7 @@ target/
 !**/src/test/**/target/
 .kotlin
 
-src/main/resources/APIKey.txt
+*.txt
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

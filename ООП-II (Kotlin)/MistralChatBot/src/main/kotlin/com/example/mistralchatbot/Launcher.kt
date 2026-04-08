@@ -1,4 +1,4 @@
-package com.zabguzxcoop.chatbotllm
+package com.example.mistralchatbot
 
 import javafx.application.Application
 
