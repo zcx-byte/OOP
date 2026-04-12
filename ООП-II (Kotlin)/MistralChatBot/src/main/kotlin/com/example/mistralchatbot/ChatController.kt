@@ -42,15 +42,28 @@ class ChatController {
     // Создаём бота через интерфейс, можно подменить Bot на другой класс без правок контроллера
     private val bot: IBot = Bot()
 
+    private var autoSaveCounter = 0
+
+    fun setUserName(name: String) {
+        userName = name
+        userLabel.text = "Пользователь: $name"
+        apiKey = ApiKeyReader.readApiKey()
+
+        bot.setUser(name)   // Передаем имя боту (очищает историю)
+
+        // НЕ очищаем файл — загружаем из памяти
+        addMessage("система", "Привет, $name! История готова.")
+    }
+
     // Добавляет сообщение в чат с разным оформлением для пользователя, бота и системы
     private fun addMessage(who: String, text: String) {
 
         val label = Label(text)
-        label.wrapTextProperty().set(true)  // Включаем перенос длинных строк
-        label.maxWidth = 350.0              // Ограничиваем ширину, чтобы текст не растягивал окно
+        label.wrapTextProperty().set(true)      // Включаем перенос длинных строк
+        label.maxWidth = 350.0                  // Ограничиваем ширину, чтобы текст не растягивал окно
         label.padding = Insets(8.0)         // Отступы внутри "пузырька"
 
-        val box = HBox(label)  // Оборачиваем текст в контейнер для выравнивания
+        val box = HBox(label)       // Оборачиваем текст в контейнер для выравнивания
 
         when (who) {
             "пользователь" -> {
@@ -70,6 +83,7 @@ class ChatController {
             }
 
             else -> {
+
                 // Системные сообщения: по центру, без фона, серым цветом
                 label.style = "-fx-background-color: transparent; -fx-text-fill: gray; -fx-font-size: 11px;"
                 label.alignment = Pos.CENTER
@@ -77,25 +91,25 @@ class ChatController {
             }
         }
 
-        messagesContainer.children.add(box)  // Добавляем сообщение в контейнер
-        scrollPane.vvalue = 1.0              // Автопрокрутка вниз к новому сообщению
+        messagesContainer.children.add(box)     // Добавляем сообщение в контейнер
+        scrollPane.vvalue = 1.0                 // Автопрокрутка вниз к новому сообщению
     }
 
-    // Вызывается из RegistrationController после ввода имени
-    // Инициализируем чат: запоминаем пользователя, читаем ключ, очищаем историю
-    fun setUserName(name: String) {
-
-        userName = name
-        userLabel.text = "Пользователь: $name"
-        apiKey = ApiKeyReader.readApiKey()
-
-        // Полностью очищаем файл истории для нового пользователя
-        // Пишем пустую строку — файл либо создастся, либо обнулится
-        File("history_$userName.txt").writeText("")
-
-        // Приветственное сообщение в чате
-        addMessage("система", "Привет, $name! История чата очищена. Напиши 'помощь'.")
-    }
+//    // Вызывается из RegistrationController после ввода имени
+//    // Инициализируем чат: запоминаем пользователя, читаем ключ, очищаем историю
+//    fun setUserName(name: String) {
+//
+//        userName = name
+//        userLabel.text = "Пользователь: $name"
+//        apiKey = ApiKeyReader.readApiKey()
+//
+//        // Полностью очищаем файл истории для нового пользователя
+//        // Пишем пустую строку — файл либо создастся, либо обнулится
+//        File("history_$userName.txt").writeText("")
+//
+//        // Приветственное сообщение в чате
+//        addMessage("система", "Привет, $name! История чата очищена. Напиши 'помощь'.")
+//    }
 
     // Удаляет системное сообщение (например, "Печатает..."), если оно ещё висит
     // Нужно, чтобы индикатор не остался висеть, если ответ уже пришёл
@@ -118,6 +132,12 @@ class ChatController {
         addMessage("пользователь", text)
         messageField.clear()        // Очищаем поле ввода
         blockInput(true)            // Блокируем ввод, пока ждём ответ (чтобы не спамить запросами)
+
+        if (text.lowercase() in listOf("сохранить", "/save")) {
+            saveHistoryToFile()  // ← НОВЫЙ вызов
+            blockInput(false)
+            return
+        }
 
         // --- Цепочка обработки: от простого к сложному ---
 
@@ -171,13 +191,6 @@ class ChatController {
         }
     }
 
-    // Вспомогательный метод: оформляет и показывает ответ бота
-    private fun sendAnswer(userText: String, botText: String) {
-        addMessage("бот", botText)      // Добавляем сообщение в чат
-        saveToFile(userText, botText)   // Сохраняем переписку в файл
-        blockInput(false)               // Разблокируем поле ввода для следующего сообщения
-    }
-
     // Блокирует/разблокирует поле ввода и кнопку
     // Нужно, чтобы пользователь не отправил 10 запросов, пока ждёт ответ на первый
     private fun blockInput(block: Boolean) {
@@ -186,24 +199,30 @@ class ChatController {
         if (!block) messageField.requestFocus()  // Возвращаем фокус, чтобы удобно было печатать дальше
     }
 
-
-
     // Сохраняет переписку в текстовый файл
     // Формат: дата, кто написал, что написал, разделитель
-    // TODO: сделать переменную, которая будет хранить историю чата (добавить в класс бота)
-    private fun saveToFile(userMsg: String, botMsg: String) {
+    private fun saveHistoryToFile() {
         try {
-            // appendText — дописывает в конец файла, не стирая старое
-            // Используем Kotlin-стиль: File().appendText() вместо громоздкого FileWriter
-            File("history_$userName.txt").appendText(
-                "${LocalDateTime.now()}\n" +
-                        "Вы: $userMsg\n" +
-                        "Бот: $botMsg\n" +
-                        "${"-".repeat(50)}\n"  // Визуальный разделитель между сообщениями
-            )
+            val historyText = bot.getHistoryForSave()
+            File("history_$userName.txt").writeText(historyText)
         } catch (e: Exception) {
-            // Если не удалось сохранить (нет прав, диск полон) — логируем, но не ломаем чат
-            println("Ошибка сохранения: ${e.message}")
+            println("Автосохранение: ${e.message}")
         }
+    }
+
+    private fun sendAnswer(userText: String, botText: String) {
+        addMessage("бот", botText)
+
+        // 1. В память бота
+        bot.addToHistory(userText, botText)
+
+        // 2. Автосохранение каждые 3 сообщения
+        autoSaveCounter++
+        if (autoSaveCounter >= 3) {
+            saveHistoryToFile()
+            autoSaveCounter = 0
+        }
+
+        blockInput(false)
     }
 }

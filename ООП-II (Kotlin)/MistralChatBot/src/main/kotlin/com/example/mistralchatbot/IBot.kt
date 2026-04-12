@@ -1,6 +1,6 @@
 package com.example.mistralchatbot
 
-// Интерфейс — контракт, что умеет бот
+// Интерфейс — что умеет бот
 interface IBot {
 
     // Обработка команд (/привет, /время, /курс)
@@ -14,4 +14,12 @@ interface IBot {
 
     // Ответ от нейросети (если ничего не подошло)
     fun getAIResponse(message: String, apiKey: String): String
+
+    fun addToHistory(userMessage: String, botResponse: String)
+
+    fun getHistoryForSave(): String
+
+    fun setUser(name: String)
+
+    fun clearHistory()
 }

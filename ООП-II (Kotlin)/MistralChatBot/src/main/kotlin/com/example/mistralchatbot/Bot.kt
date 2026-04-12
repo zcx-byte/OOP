@@ -11,8 +11,45 @@ import java.time.format.DateTimeFormatter
 // Реализует интерфейс IBot, чтобы контроллер мог работать с ним "вслепую"
 class Bot : IBot {
 
+    private val chatHistory = mutableListOf<ChatMessage>()
+
+    private var userName = ""
+
     // HTTP-клиент для запросов (нужен для получения курса валют)
     private val client = OkHttpClient()
+
+    // создаём экземпляр класса MistralApiService
+    private val mistralService = MistralApiService()
+
+    // инициализация пользователя
+    override fun setUser(name: String) {
+        userName = name
+        chatHistory.clear()
+    }
+
+    // добавить сообщение в историю
+    override fun addToHistory(userMessage: String, botResponse: String) {
+
+        val timestamp  = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM HH:mm:ss"))
+
+        chatHistory.add(ChatMessage(timestamp , userMessage, botResponse))
+
+    }
+
+    override fun getHistoryForSave(): String {
+        return if (chatHistory.isEmpty()) {
+            "История пуста"
+        } else {
+            chatHistory.joinToString("\n") { msg ->
+                "${msg.timestamp} | Вы: ${msg.userMessage} | Бот: ${msg.botMessage}"
+            }
+        }
+    }
+
+    // Очистить историю
+    override fun clearHistory() {
+        chatHistory.clear()
+    }
 
     // Обрабатываем команды типа /привет, /время, /курс
     // Если команда распознана — возвращаем ответ, если нет — null (пусть пробует дальше)
@@ -57,7 +94,7 @@ class Bot : IBot {
         val lower = expression.lowercase()
 
         // Находим все числа в тексте (целые и дробные), берём первые два
-            val numbers = Regex("\\d+\\.?\\d*").findAll(expression)
+        val numbers = Regex("\\d+\\.?\\d*").findAll(expression)
             .map { it.value.toDouble() }.toList()
 
         // Если чисел меньше двух — нечего считать
@@ -73,14 +110,17 @@ class Bot : IBot {
             lower.contains("умножь") || lower.contains("multiply") || lower.contains("x") -> {
                 result = a * b; symbol = "*"
             }
+
             lower.contains("раздели") || lower.contains("divide") || lower.contains("/") -> {
                 if (b == 0.0) return "На ноль делить нельзя!"
                 result = a / b; symbol = "/"
             }
+
             lower.contains("прибавь") || lower.contains("сложи") || lower.contains("add") ||
                     lower.contains("+") || lower.contains("плюс") -> {
                 result = a + b; symbol = "+"
             }
+
             lower.contains("вычти") || lower.contains("отними") || lower.contains("subtract") ||
                     lower.contains("-") || lower.contains("минус") -> {
                 result = a - b; symbol = "-"
@@ -111,13 +151,10 @@ class Bot : IBot {
             else -> null
         }
     }
-
-    //TODO: в UML дать пояснение от какого класса к какому рисовать
-
     // Если ничего не подошло — спрашиваем у нейросети (через сервис)
-    // TODO: создать обьъек класс местрал и уже с ним работать
+
     override fun getAIResponse(message: String, apiKey: String): String {
-        return MistralApiService().sendMessage(message, apiKey)
+        return mistralService.sendMessage(message, apiKey)
     }
 
     // Внутренний метод: получает курсы валют с публичного API
@@ -158,7 +195,7 @@ class Bot : IBot {
 
             result.append("\n Курсы приблизительные").toString()
         } catch (e: Exception) {
-            
+
             // Если API упал или нет интернета — не ломаем приложение, просто сообщаем
             "Не удалось загрузить курс."
         }
