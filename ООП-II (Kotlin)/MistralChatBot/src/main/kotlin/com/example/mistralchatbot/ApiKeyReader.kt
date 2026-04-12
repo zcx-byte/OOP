@@ -12,6 +12,6 @@ object ApiKeyReader {
         // File("api_key.txt") - создаём объект файла
         // readText() - читаем всё содержимое как текст
         // trim() - убираем пробелы и переносы строк в начале и конце
-        return File("api_key.txt").readText().trim()
+        return File("apiKey.txt").readText().trim()
     }
 }
