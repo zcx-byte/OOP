@@ -6,6 +6,7 @@ target/
 
 *.txt
 apiKey.txt
+*.drawio
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
