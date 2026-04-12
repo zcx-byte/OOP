@@ -7,7 +7,7 @@ target/
 *.txt
 apiKey.txt
 *.drawio
-/src/test/
+/src/test/kotlin
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
