@@ -107,7 +107,7 @@ class Bot : IBot {
 
         // Определяем операцию по ключевым словам или символам
         when {
-            lower.contains("умножь") || lower.contains("multiply") || lower.contains("x") -> {
+            lower.contains("*") || lower.contains("умножь") || lower.contains("multiply") || lower.contains("x") -> {
                 result = a * b; symbol = "*"
             }
 
