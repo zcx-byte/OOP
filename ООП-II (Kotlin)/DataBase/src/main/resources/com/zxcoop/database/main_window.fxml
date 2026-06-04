@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.zxcoop.database.controller.MainWindowController"
+      spacing="10"
+      prefWidth="800"
+      prefHeight="500"
+      style="-fx-padding: 10;">
+
+    <MenuBar>
+        <Menu text="Файл">
+            <MenuItem text="Сохранить" onAction="#onSave"/>
+            <MenuItem text="Выход" onAction="#onExit"/>
+        </Menu>
+    </MenuBar>
+
+    <HBox spacing="10">
+        <Button text="Добавить" onAction="#onAdd"/>
+        <Button text="Изменить" onAction="#onEdit"/>
+        <Button text="Удалить" onAction="#onDelete"/>
+        <Button text="Поиск" onAction="#onSearch"/>
+    </HBox>
+
+    <TextField fx:id="searchField" promptText="Поиск по ФИО..."/>
+
+    <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colFullName" text="ФИО" prefWidth="200"/>
+            <TableColumn fx:id="colAge" text="Возраст" prefWidth="80"/>
+            <TableColumn fx:id="colDateOfBirth" text="Дата рождения" prefWidth="120"/>
+            <TableColumn fx:id="colPhone" text="Телефон" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="statusLabel" text="Готово"/>
+</VBox>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="373.0" prefWidth="410.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zxcoop.examrandqote.HelloController">
+   <children>
+      <TextArea fx:id="textOutput" layoutX="27.0" layoutY="29.0" prefHeight="188.0" prefWidth="354.0" />
+      <Button layoutX="112.0" layoutY="321.0" mnemonicParsing="false" onAction="#onAtFile" text="сгенерировать фразу из файла" />
+       <Button fx:id="sendButton" layoutX="99.0" layoutY="260.0" onAction="#onSendButton" text="Сгенерировать случайнуюю цитату" />
+   </children>
+</AnchorPane>
